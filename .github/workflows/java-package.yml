@@ -1,0 +1,40 @@
+name: Build package, documentation, and test coverage
+
+on:
+  pull_request:
+    branches:
+      - master
+      - final
+  push:
+    branches:
+      - master
+      - final
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checks out the repository
+        uses: actions/checkout@v2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.0.0
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+      - name: Build with Maven
+        run: mvn package
+      - name: Upload the build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
+          path: target/
+      - name: Upload the documentation artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: documentation-artifact
+          path: target/apidocs/
+      - name: Upload the test coverage artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-coverage-artifact
+          path: target/site/jacoco/
