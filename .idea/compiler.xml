@@ -6,9 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="PROJETO_PA-2" />
+        <module name="project-name" />
         <module name="PROJETO_PA_2_new" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="PROJETO_PA_2_new" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
