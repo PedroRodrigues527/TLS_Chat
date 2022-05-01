@@ -62,7 +62,4 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public String getUserName () {
-        return userName;
-    }
 }
