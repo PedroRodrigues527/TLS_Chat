@@ -3,7 +3,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ClientHandler implements Runnable {
 
@@ -18,12 +20,15 @@ public class ClientHandler implements Runnable {
         this.in = new ObjectInputStream( server.getInputStream( ) );
         this.out = new ObjectOutputStream( server.getOutputStream( ) );
         this.userName = (String) in.readObject( );
-        System.out.println("CLIENT_HELLO ");
-        out.writeObject( userName );
-        clientHandlers.add( this );
 
+        //HELLO handshake
+        System.out.println("CLIENT_HELLO");
+        out.writeObject( userName );
+
+        //Announcement message
+        clientHandlers.add( this );
         String announcement = (String) in.readObject( );
-        broadcastMessage( announcement.getBytes( StandardCharsets.UTF_8 ), true );
+        broadcastMessage( announcement.getBytes( StandardCharsets.UTF_8 ), true, false );
     }
 
     @Override
@@ -31,7 +36,7 @@ public class ClientHandler implements Runnable {
         while ( server.isConnected( ) ) {
             try {
                 String message = (String) in.readObject( );
-                broadcastMessage( message.getBytes( StandardCharsets.UTF_8 ), false );
+                broadcastMessage(message.getBytes(StandardCharsets.UTF_8), false, message.charAt(0) == '@');
             } catch ( IOException | ClassNotFoundException e ) {
                 try {
                     removeClient( this );
@@ -51,27 +56,51 @@ public class ClientHandler implements Runnable {
         out.close( );
     }
 
-    public void broadcastMessage ( byte[] message, boolean isAnouncement ) throws IOException {
+    public void broadcastMessage ( byte[] message, boolean isAnnouncement, boolean isPrivate ) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
             if ( ! this.equals( client ) ) {
-                try {
-                    ArrayList<Object> messageWithUserName = new ArrayList<>( 2 );
-
-                    if(!isAnouncement) {
+                if ( !isPrivate ) {
+                    try {
+                        ArrayList<Object> messageWithUserName = new ArrayList<>(2);
+                        if (!isAnnouncement) {
+                            messageWithUserName.add(this.userName);
+                        } else {
+                            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                            messageWithUserName.add("[" + timestamp + "]");
+                        }
+                        messageWithUserName.add(message);
+                        client.out.writeObject(messageWithUserName);
+                        client.out.flush();
+                    } catch (IOException e) {
+                        removeClient(client);
+                    }
+                }
+                else {
+                    //mensagem especifica para users
+                    try {
+                        ArrayList<Object> messageWithUserName = new ArrayList<>(2);
                         messageWithUserName.add(this.userName);
+                        messageWithUserName.add(message);
+
+                        String message_verify = new String( (byte[]) messageWithUserName.get( 1 ) );
+                        String[] separated_message = message_verify.split(" ", 2);
+                        String[] users = separated_message[0].split(",@", countChar(separated_message[1], "@"));
+                        users[0] = users[0].substring(1);
+
+                        if ( Arrays.asList(users).contains(client.userName) ) {
+                            client.out.writeObject(messageWithUserName);
+                            client.out.flush();
+                        }
+                    } catch (IOException e) {
+                        removeClient(client);
                     }
-                    else
-                    {
-                        messageWithUserName.add("");
-                    }
-                    messageWithUserName.add( message );
-                    client.out.writeObject( messageWithUserName );
-                    client.out.flush( );
-                } catch ( IOException e ) {
-                    removeClient( client );
                 }
             }
         }
     }
 
+    //FONTE: https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string
+    public static int countChar(String str, String target) {
+        return (str.length() - str.replace(target, "").length()) / target.length();
+    }
 }

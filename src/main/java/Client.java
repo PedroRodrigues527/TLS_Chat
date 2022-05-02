@@ -22,12 +22,14 @@ public class Client {
         this.hashUser = hashUser;
         out = new ObjectOutputStream( client.getOutputStream( ) );
         in = new ObjectInputStream( client.getInputStream( ) );
+
+        //HELLO handshake
         out.writeObject( userName );
         if(userName.equals(in.readObject( )))
         {
             System.out.println("SERVER_HELLO");
         }
-        out.writeObject("x:O cliente " + userName + " ligou-se ao chat.");
+        out.writeObject("O cliente '" + userName + "' ligou-se ao Chat.");
     }
 
     public void sendMessages () throws IOException {
@@ -51,13 +53,7 @@ public class Client {
                     ArrayList<Object> messageWithUserName = (ArrayList<Object>) in.readObject( );
                     String userName = (String) messageWithUserName.get( 0 );
                     String messageDecrypted = new String( (byte[]) messageWithUserName.get( 1 ) );
-                    if(userName.equals(""))
-                    {
-                        System.out.println(messageDecrypted);
-                    }
-                    else {
-                        System.out.println(userName + ": " + messageDecrypted);
-                    }
+                    System.out.println(userName + ": " + messageDecrypted);
                 } catch ( IOException | ClassNotFoundException e ) {
                     try {
                         closeConnection( );
