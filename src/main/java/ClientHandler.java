@@ -25,6 +25,8 @@ public class ClientHandler implements Runnable {
         System.out.println("CLIENT_HELLO");
         out.writeObject( userName );
 
+        //OK handshake
+
         //Announcement message
         clientHandlers.add( this );
         String announcement = (String) in.readObject( );

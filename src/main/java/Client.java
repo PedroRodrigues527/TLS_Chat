@@ -29,7 +29,13 @@ public class Client {
         {
             System.out.println("SERVER_HELLO");
         }
+
+        //OK handshake
+
+
+        //Announcement message
         out.writeObject("O cliente '" + userName + "' ligou-se ao Chat.");
+        System.out.println("Agora já pode enviar mensagens no chat.");
     }
 
     public void sendMessages () throws IOException {
