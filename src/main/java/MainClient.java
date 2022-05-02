@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class MainClient {
 
-    public static void main ( String[] args ) throws IOException {
+    public static void main ( String[] args ) throws IOException, ClassNotFoundException {
         //Insert username
         String userName = usernameChoice();
 
