@@ -85,7 +85,17 @@ public class MainClient {
                     }
                     break;
                 case "DES":
-                    key_size_choice = 56;
+                    System.out.println( "Choose key size (56 , 112, or 168 bits):");
+                    userchoice=usrInput.nextLine();
+                    String[] keySizes_des = {"56", "112", "168"};
+                    if( !Arrays.asList(keySizes_des).contains(userchoice))
+                    {
+                        System.out.println( "ERROR: Unknown choice. Back to Choose Key Size..." );
+                    }
+                    else
+                    {
+                        key_size_choice = Integer.parseInt(userchoice);
+                    }
                     break;
                 case "3DES":
                     key_size_choice = 168;
