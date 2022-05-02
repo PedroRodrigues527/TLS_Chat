@@ -21,7 +21,7 @@ public class MainClient {
 
         //System.out.println("User " + userName + " uses " + encryptionUser + " with key size " + keyUserSize + " with hash " + hashUser);
 
-        Client client = new Client( "127.0.0.1" , 8000 , userName );
+        Client client = new Client( "127.0.0.1" , 8000 , userName, encryptionUser, keyUserSize, hashUser );
         client.readMessages( );
         client.sendMessages( );
     }

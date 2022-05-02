@@ -10,11 +10,16 @@ public class Client {
     private final Socket client;
     private final ObjectInputStream in;
     private final ObjectOutputStream out;
-    private final String userName;
 
-    public Client ( String host , int port , String userName ) throws IOException {
+    private final String userName, encryptionUser, hashUser;
+    private final int keySizeUser;
+
+    public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser ) throws IOException {
         client = new Socket( host , port );
         this.userName = userName;
+        this.encryptionUser = encryptionUser;
+        this.keySizeUser = keySizeUser;
+        this.hashUser = hashUser;
         out = new ObjectOutputStream( client.getOutputStream( ) );
         in = new ObjectInputStream( client.getInputStream( ) );
         out.writeObject( userName );
