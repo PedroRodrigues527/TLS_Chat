@@ -14,7 +14,7 @@ public class AES {
     private static final int ENCRYPT_MODE = 1;
     private static final int DECRYPT_MODE = 2;
 
-    public byte[] encrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+    public static byte[] encrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( "AES" );
         SecretKeySpec secretKeySpec = new SecretKeySpec( key.getBytes( StandardCharsets.UTF_8 ) , "AES" );
         cipher.init( Cipher.ENCRYPT_MODE , secretKeySpec );
@@ -27,7 +27,7 @@ public class AES {
         return output.toByteArray( );
     }
 
-    public byte[] decrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+    public static byte[] decrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( "AES" );
         SecretKeySpec secretKeySpec = new SecretKeySpec( key.getBytes( StandardCharsets.UTF_8 ) , "AES" );
         cipher.init( Cipher.DECRYPT_MODE , secretKeySpec );
@@ -41,7 +41,7 @@ public class AES {
         return Arrays.copyOfRange( outputByte , 0 , outputByte.length - padding );
     }
 
-    private ArrayList<byte[]> splitText ( byte[] text , int blockSize , int mode ) throws IOException {
+    private static ArrayList<byte[]> splitText ( byte[] text , int blockSize , int mode ) throws IOException {
         ArrayList<byte[]> textSplits = new ArrayList<>( );
         for ( int startPos = 0; startPos < text.length; startPos += blockSize ) {
             int endPos = startPos + blockSize;

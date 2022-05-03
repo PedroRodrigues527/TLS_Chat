@@ -22,8 +22,7 @@ public class Client {
     private final String userName, encryptionUser, hashUser;
     private final int keySizeUser;
 
-    private String symmmetricKey;
-    private AES aes;
+    private String symmetricKey;
 
     private RSA rsa; //Final -> might not be initialized - ver!
     private PublicKey receiverPublicRSAKey;
@@ -40,19 +39,20 @@ public class Client {
             rsa = new RSA( keySizeUser );
             rsa.rsaKeyDistribution();
         }
-        else if ( encryptionUser.equals("AES") ) {
-            aes = new AES();
-            symmmetricKey = aes.generateKey(keySizeUser);
-        }
 
         out = new ObjectOutputStream(client.getOutputStream());
         in = new ObjectInputStream(client.getInputStream());
 
-
         //HELLO handshake
-        out.writeObject( userName );
-        if(userName.equals(in.readObject( )))
-        {
+        ArrayList<Object> cipherSuite = new ArrayList<>(4);
+        cipherSuite.add(userName);
+        cipherSuite.add(encryptionUser);
+        cipherSuite.add(keySizeUser);
+        cipherSuite.add(hashUser);
+        out.writeObject(cipherSuite);
+
+        if ( encryptionUser.equals( "AES" ) ) {
+            symmetricKey = (String) in.readObject();
             System.out.println("SERVER_HELLO");
         }
 
@@ -62,9 +62,21 @@ public class Client {
 
         }
         else if ( encryptionUser.equals("AES") ) {
-            encryptedUsername = aes.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmmetricKey);
+            encryptedUsername = AES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
         }
         out.writeObject( encryptedUsername );
+
+        byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
+        byte[] decryptedMessageReceivedOK = new byte[0];
+        if(encryptionUser.equals("AES")) {
+            decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+
+        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
+        if(messageDecryptS.equals(userName))
+        {
+            System.out.println("SERVER_OK");
+        }
 
         //Announcement message
         out.writeObject("O cliente '" + userName + "' ligou-se ao Chat.");
@@ -83,8 +95,8 @@ public class Client {
         return keySizeUser;
     }
 
-    public String getSymmmetricKey() {
-        return symmmetricKey;
+    public String getSymmetricKey() {
+        return symmetricKey;
     }
 
     public void sendMessages () throws IOException {

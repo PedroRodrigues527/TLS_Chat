@@ -140,7 +140,7 @@ public class MainClient {
             System.out.println("Choose type of hash (none[default], SHA-256, SHA-512, MD4 or MD5): ");
             userchoice = usrInput.nextLine();
             if (!Arrays.asList(hashes).contains(userchoice)) {
-                userchoice = "";
+                userchoice = "none";
             }
         }
         return userchoice;

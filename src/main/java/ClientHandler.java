@@ -1,8 +1,13 @@
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,22 +20,48 @@ public class ClientHandler implements Runnable {
     private final String userName;
     private final Socket server;
 
-    public ClientHandler ( Socket server ) throws IOException, ClassNotFoundException {
+    private final String encUser;
+    private final int sizeKeyUser;
+    private final String hashUser;
+
+    private String symmetricKey;
+
+    public ClientHandler ( Socket server ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         this.server = server;
         this.in = new ObjectInputStream( server.getInputStream( ) );
         this.out = new ObjectOutputStream( server.getOutputStream( ) );
-        this.userName = (String) in.readObject( );
 
         //HELLO handshake
-        if(userName.equals(in.readObject( )))
+        ArrayList<Object> clientHello = (ArrayList<Object>) in.readObject( );
+        this.userName = (String) clientHello.get( 0 );
+        this.encUser = (String) clientHello.get( 1 );
+        this.sizeKeyUser = (int) clientHello.get( 2 );
+        this.hashUser = (String) clientHello.get( 3 );
+        System.out.println("CLIENT_HELLO");
+
+        if(encUser.equals("AES"))
         {
-            System.out.println("CLIENT_HELLO");
+            AES aes = new AES();
+            this.symmetricKey = aes.generateKey(sizeKeyUser);
+            out.writeObject( symmetricKey );
         }
-        out.writeObject( userName );
 
         //OK handshake
-        byte[] messageReceivedOK = (byte[]) in.readObject();
+        byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
+        byte[] decryptedMessageReceivedOK = new byte[0];
+        if(encUser.equals("AES")) {
+            decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
 
+        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
+        if(messageDecryptS.equals(userName))
+        {
+            System.out.println("CLIENT_OK");
+            if(encUser.equals("AES")) {
+                byte[] encryptedMessageSend = AES.encrypt(decryptedMessageReceivedOK, symmetricKey);
+                out.writeObject(encryptedMessageSend);
+            }
+        }
 
         //Announcement message
         clientHandlers.add( this );
