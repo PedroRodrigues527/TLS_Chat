@@ -1,8 +1,13 @@
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,31 +20,71 @@ public class ClientHandler implements Runnable {
     private final String userName;
     private final Socket server;
 
-    public ClientHandler ( Socket server ) throws IOException, ClassNotFoundException {
+    private final String encUser;
+    private final int sizeKeyUser;
+    private final String hashUser;
+
+    private String symmetricKey;
+
+    public ClientHandler ( Socket server ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         this.server = server;
         this.in = new ObjectInputStream( server.getInputStream( ) );
         this.out = new ObjectOutputStream( server.getOutputStream( ) );
-        this.userName = (String) in.readObject( );
 
         //HELLO handshake
+        ArrayList<Object> clientHello = (ArrayList<Object>) in.readObject( );
+        this.userName = (String) clientHello.get( 0 );
+        this.encUser = (String) clientHello.get( 1 );
+        this.sizeKeyUser = (int) clientHello.get( 2 );
+        this.hashUser = (String) clientHello.get( 3 );
         System.out.println("CLIENT_HELLO");
-        out.writeObject( userName );
+
+        if(encUser.equals("AES"))
+        {
+            AES aes = new AES();
+            this.symmetricKey = aes.generateKey(sizeKeyUser);
+            out.writeObject( symmetricKey );
+        }
 
         //OK handshake
+        byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
+        byte[] decryptedMessageReceivedOK = new byte[0];
+        if(encUser.equals("AES")) {
+            decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+
+        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
+        if(messageDecryptS.equals(userName))
+        {
+            System.out.println("CLIENT_OK");
+            if(encUser.equals("AES")) {
+                byte[] encryptedMessageSend = AES.encrypt(decryptedMessageReceivedOK, symmetricKey);
+                out.writeObject(encryptedMessageSend);
+            }
+        }
 
         //Announcement message
         clientHandlers.add( this );
         String announcement = (String) in.readObject( );
-        broadcastMessage( announcement.getBytes( StandardCharsets.UTF_8 ), true, false );
+        broadcastMessage( announcement.getBytes( StandardCharsets.UTF_8 ), true);
     }
 
     @Override
     public void run () {
         while ( server.isConnected( ) ) {
             try {
-                String message = (String) in.readObject( );
-                broadcastMessage(message.getBytes(StandardCharsets.UTF_8), false, message.charAt(0) == '@');
-            } catch ( IOException | ClassNotFoundException e ) {
+                byte[] message = (byte[]) in.readObject( );
+                if(encUser.equals("AES"))
+                {
+                    message = AES.decrypt(message, this.symmetricKey);
+                }
+                String messageDecrypted = new String(message, StandardCharsets.UTF_8);
+                if(messageDecrypted.charAt(0) != '@')
+                    broadcastMessage(messageDecrypted.getBytes(StandardCharsets.UTF_8), false);
+                else
+                    specificMessage(messageDecrypted.getBytes(StandardCharsets.UTF_8));
+            } catch (IOException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException |
+                     NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e ) {
                 try {
                     removeClient( this );
                     break;
@@ -58,44 +103,59 @@ public class ClientHandler implements Runnable {
         out.close( );
     }
 
-    public void broadcastMessage ( byte[] message, boolean isAnnouncement, boolean isPrivate ) throws IOException {
+    public void broadcastMessage ( byte[] message, boolean isAnnouncement) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
             if ( ! this.equals( client ) ) {
-                if ( !isPrivate ) {
-                    try {
-                        ArrayList<Object> messageWithUserName = new ArrayList<>(2);
-                        if (!isAnnouncement) {
-                            messageWithUserName.add(this.userName);
-                        } else {
-                            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                            messageWithUserName.add("[" + timestamp + "]");
-                        }
-                        messageWithUserName.add(message);
+                try {
+                    ArrayList<Object> messageWithUserName = new ArrayList<>(2);
+                    if (!isAnnouncement) {
+                        messageWithUserName.add(this.userName);
+                    } else {
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        messageWithUserName.add("[" + timestamp + "]");
+                    }
+
+                    if ((client.encUser).equals("AES"))
+                    {
+                        message = AES.encrypt(message, client.symmetricKey);
+                    }
+                    messageWithUserName.add(message);
+
+                    client.out.writeObject(messageWithUserName);
+                    client.out.flush();
+                } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                         BadPaddingException | InvalidKeyException e) {
+                    removeClient(client);
+                }
+            }
+        }
+    }
+
+    public void specificMessage ( byte[] message ) throws IOException {
+        for ( ClientHandler client : clientHandlers ) {
+            if (!this.equals(client)) {
+                try {
+                    ArrayList<Object> messageWithUserName = new ArrayList<>(2);
+                    messageWithUserName.add(this.userName);
+                    byte[] messageEncrypted = new byte[0];
+                    if (encUser.equals("AES"))
+                    {
+                        messageEncrypted = AES.encrypt(message, client.symmetricKey);
+                    }
+                    messageWithUserName.add(messageEncrypted);
+
+                    String message_verify = new String( message );
+                    String[] separated_message = message_verify.split(" ", 2);
+                    String[] users = separated_message[0].split(",@", countChar(separated_message[1], "@"));
+                    users[0] = users[0].substring(1);
+
+                    if ( Arrays.asList(users).contains(client.userName) ) {
                         client.out.writeObject(messageWithUserName);
                         client.out.flush();
-                    } catch (IOException e) {
-                        removeClient(client);
                     }
-                }
-                else {
-                    //mensagem especifica para users
-                    try {
-                        ArrayList<Object> messageWithUserName = new ArrayList<>(2);
-                        messageWithUserName.add(this.userName);
-                        messageWithUserName.add(message);
-
-                        String message_verify = new String( (byte[]) messageWithUserName.get( 1 ) );
-                        String[] separated_message = message_verify.split(" ", 2);
-                        String[] users = separated_message[0].split(",@", countChar(separated_message[1], "@"));
-                        users[0] = users[0].substring(1);
-
-                        if ( Arrays.asList(users).contains(client.userName) ) {
-                            client.out.writeObject(messageWithUserName);
-                            client.out.flush();
-                        }
-                    } catch (IOException e) {
-                        removeClient(client);
-                    }
+                } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                         BadPaddingException | InvalidKeyException e) {
+                    removeClient(client);
                 }
             }
         }

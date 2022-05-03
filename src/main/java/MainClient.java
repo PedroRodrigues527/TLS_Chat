@@ -1,4 +1,8 @@
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -6,7 +10,7 @@ import java.util.Scanner;
 
 public class MainClient {
 
-    public static void main ( String[] args ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+    public static void main ( String[] args ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         //Insert username
         String userName = usernameChoice();
 
@@ -15,7 +19,6 @@ public class MainClient {
 
         //Insert key size
         int keyUserSize = keySizeChoice(encryptionUser);
-        System.out.println(keyUserSize);
 
         //Insert hash mode
         String hashUser = hashChoice(encryptionUser);
@@ -136,7 +139,7 @@ public class MainClient {
             System.out.println("Choose type of hash (none[default], SHA-256, SHA-512, MD4 or MD5): ");
             userchoice = usrInput.nextLine();
             if (!Arrays.asList(hashes).contains(userchoice)) {
-                userchoice = "";
+                userchoice = "none";
             }
         }
         return userchoice;
