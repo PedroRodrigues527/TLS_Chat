@@ -22,10 +22,15 @@ public class ClientHandler implements Runnable {
         this.userName = (String) in.readObject( );
 
         //HELLO handshake
-        System.out.println("CLIENT_HELLO");
+        if(userName.equals(in.readObject( )))
+        {
+            System.out.println("CLIENT_HELLO");
+        }
         out.writeObject( userName );
 
         //OK handshake
+        byte[] messageReceivedOK = (byte[]) in.readObject();
+
 
         //Announcement message
         clientHandlers.add( this );
