@@ -80,7 +80,7 @@ public class Client {
 
         //Announcement message
         out.writeObject("O cliente '" + userName + "' ligou-se ao Chat.");
-        System.out.println("Agora já pode enviar mensagens no chat.");
+        System.out.println("Agora já pode enviar mensagens no Chat.");
     }
 
     public String getEncryptionUser() {
@@ -103,11 +103,16 @@ public class Client {
         while ( client.isConnected( ) ) {
             Scanner usrInput = new Scanner( System.in );
             String message = usrInput.nextLine( );
+            byte[] messageByte = new byte[0];
             try {
-                if ( this.encryptionUser.equals("RSA") ){
+                if ( encryptionUser.equals("RSA") ){
                     rsa.sendRequest( message , out );
                 }
-                out.writeObject( message );
+                else if (encryptionUser.equals("AES"))
+                {
+                    messageByte = AES.encrypt(message.getBytes(StandardCharsets.UTF_8), symmetricKey);
+                }
+                out.writeObject( messageByte );
             } catch ( IOException e ) {
                 closeConnection( );
                 break;
@@ -123,14 +128,17 @@ public class Client {
         new Thread( () -> {
             while ( client.isConnected( ) ) {
                 try {
-                    if ( this.encryptionUser.equals( "RSA" ) ) {
-
-                    }
                     ArrayList<Object> messageWithUserName = (ArrayList<Object>) in.readObject( );
                     String userName = (String) messageWithUserName.get( 0 );
-                    String messageDecrypted = new String( (byte[]) messageWithUserName.get( 1 ) );
+                    byte[] messageEncrypted = (byte[]) messageWithUserName.get( 1 );
+                    if (encryptionUser.equals("AES"))
+                    {
+                        messageEncrypted = AES.decrypt(messageEncrypted, symmetricKey);
+                    }
+                    String messageDecrypted = new String(messageEncrypted, StandardCharsets.UTF_8);
                     System.out.println(userName + ": " + messageDecrypted);
-                } catch ( IOException | ClassNotFoundException e ) {
+                } catch ( IOException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                          BadPaddingException | InvalidKeyException e ) {
                     try {
                         closeConnection( );
                     } catch ( IOException ex ) {

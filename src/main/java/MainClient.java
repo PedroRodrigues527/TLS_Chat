@@ -19,7 +19,6 @@ public class MainClient {
 
         //Insert key size
         int keyUserSize = keySizeChoice(encryptionUser);
-        System.out.println(keyUserSize);
 
         //Insert hash mode
         String hashUser = hashChoice(encryptionUser);
