@@ -1,11 +1,12 @@
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class MainClient {
 
-    public static void main ( String[] args ) throws IOException, ClassNotFoundException {
+    public static void main ( String[] args ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
         //Insert username
         String userName = usernameChoice();
 
