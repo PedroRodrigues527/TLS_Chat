@@ -32,7 +32,7 @@ public class Client {
 
         if ( encryptionUser.equals( "RSA" ) ) {
             rsa = new RSA( keySizeUser );
-            rsaKeyDistribution();
+            rsa.rsaKeyDistribution();
         }
 
         out = new ObjectOutputStream(client.getOutputStream());
@@ -67,51 +67,8 @@ public class Client {
         return keySizeUser;
     }
 
+/*******************************RSA METHODS*********************************************************************************************************************************************/
 
-    /*******************************RSA METHODS*********************************************************************************************************************************************/
-
-    private void rsaKeyDistribution () throws IOException, ClassNotFoundException {
-        // Sends the public key
-        sendPublicRSAKey( );
-        // Receive the public key of the sender
-        receivePublicRSAKey( );
-    }
-
-    private void sendPublicRSAKey () throws IOException {
-        out.writeObject( rsa.getPublicKey() );
-        out.flush( );
-    }
-
-    private void receivePublicRSAKey () throws IOException, ClassNotFoundException {
-        receiverPublicRSAKey = (PublicKey) in.readObject();
-    }
-
-    private BigInteger agreeOnSharedPrivateDHKey ( ObjectInputStream in , ObjectOutputStream out ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        // Generates a private key
-        BigInteger privateDHKey = DiffieHellman.generatePrivateKey( );
-        BigInteger publicDHKey = DiffieHellman.generatePublicKey( privateDHKey );
-        // Sends the public key to the server
-        sendPublicDHKey( publicDHKey );
-        // Waits for the server to send his public key
-        byte[] clientPublicDHKeyEncrypted = (byte[]) in.readObject( );
-        byte[] clientPublicDHKey = rsa.decrypt( clientPublicDHKeyEncrypted , receiverPublicRSAKey );
-        // Generates the common private key
-        //DiffieHellman diffieHellman = new DiffieHellman( getKeySizeUser( ) );
-        return DiffieHellman.computePrivateKey( new BigInteger( clientPublicDHKey ) , privateDHKey );
-    }
-
-    private void sendPublicDHKey ( BigInteger publicDHKey ) throws IOException {
-        out.writeObject( publicDHKey );
-        out.flush( );
-    }
-
-    private void sendRequest ( String message , ObjectOutputStream out ) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ClassNotFoundException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        // Computes the shared private key
-        privateSharedDHKey = agreeOnSharedPrivateDHKey( in , out );
-        byte[] messageInBytes = message.getBytes( );
-        out.writeObject( rsa.encrypt( messageInBytes ) );
-        out.flush( );
-    }
 
 
 /************************************************************************************************************************************************************************************************************************* */
@@ -123,7 +80,7 @@ public class Client {
             String message = usrInput.nextLine( );
             try {
                 if ( this.encryptionUser.equals("RSA") ){
-                    sendRequest( message , out );
+                    rsa.sendRequest( message , out );
                 }
                 out.writeObject( message );
             } catch ( IOException e ) {
