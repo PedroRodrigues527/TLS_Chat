@@ -9,8 +9,5 @@
         <module name="PROJETO_PA_2_New" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="PROJETO_PA_2_new" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
