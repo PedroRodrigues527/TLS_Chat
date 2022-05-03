@@ -114,12 +114,12 @@ public class ClientHandler implements Runnable {
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         messageWithUserName.add("[" + timestamp + "]");
                     }
-
+                    byte[] messageEncrypted = new byte[0];
                     if ((client.encUser).equals("AES"))
                     {
-                        message = AES.encrypt(message, client.symmetricKey);
+                        messageEncrypted = AES.encrypt(message, client.symmetricKey);
                     }
-                    messageWithUserName.add(message);
+                    messageWithUserName.add(messageEncrypted);
 
                     client.out.writeObject(messageWithUserName);
                     client.out.flush();
@@ -138,7 +138,7 @@ public class ClientHandler implements Runnable {
                     ArrayList<Object> messageWithUserName = new ArrayList<>(2);
                     messageWithUserName.add(this.userName);
                     byte[] messageEncrypted = new byte[0];
-                    if (encUser.equals("AES"))
+                    if ((client.encUser).equals("AES"))
                     {
                         messageEncrypted = AES.encrypt(message, client.symmetricKey);
                     }

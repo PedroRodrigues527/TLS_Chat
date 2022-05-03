@@ -16,7 +16,8 @@ public class AES {
 
     public static byte[] encrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( "AES" );
-        SecretKeySpec secretKeySpec = new SecretKeySpec( key.getBytes( StandardCharsets.UTF_8 ) , "AES" );
+        byte[] decodedKey = Base64.getDecoder().decode(key);
+        SecretKeySpec secretKeySpec = new SecretKeySpec( decodedKey, 0, decodedKey.length,"AES" );
         cipher.init( Cipher.ENCRYPT_MODE , secretKeySpec );
         ArrayList<byte[]> textSplits = splitText( text , 15 , ENCRYPT_MODE );
         ByteArrayOutputStream output = new ByteArrayOutputStream( );
@@ -29,7 +30,8 @@ public class AES {
 
     public static byte[] decrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( "AES" );
-        SecretKeySpec secretKeySpec = new SecretKeySpec( key.getBytes( StandardCharsets.UTF_8 ) , "AES" );
+        byte[] decodedKey = Base64.getDecoder().decode(key);
+        SecretKeySpec secretKeySpec = new SecretKeySpec( decodedKey , 0, decodedKey.length,"AES" );
         cipher.init( Cipher.DECRYPT_MODE , secretKeySpec );
         ArrayList<byte[]> textSplits = splitText( text , 16 , DECRYPT_MODE );
         ByteArrayOutputStream output = new ByteArrayOutputStream( );
