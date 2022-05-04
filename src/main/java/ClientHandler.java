@@ -45,23 +45,11 @@ public class ClientHandler implements Runnable {
         this.hashUser = (String) clientHello.get( 3 );
         System.out.println( "CLIENT_HELLO" );
 
-        if( encUser.equals( "AES" ) )
+        if( encUser.equals( "AES" ) || encUser.equals( "DES" )|| encUser.equals( "TripleDES" ) )
         {
-            AES aes = new AES();
-            this.symmetricKey = aes.generateKey( sizeKeyUser );
+            SymmetricAlgorithm sa = new SymmetricAlgorithm();
+            this.symmetricKey = sa.generateKey( sizeKeyUser, encUser );
             out.writeObject( symmetricKey );
-        }
-        else if ( encUser.equals( "DES" ) ){
-            DES des = new DES();
-            this.symmetricKey = des.generateKey( sizeKeyUser );
-            out.writeObject( symmetricKey );
-        }
-        else if( encUser.equals( "TripleDES" ) )
-        {
-            TripleDES tripledes=new TripleDES();
-            this.symmetricKey = tripledes.generateKey( sizeKeyUser );
-            out.writeObject( symmetricKey );
-
         }
         else if( encUser.equals( "RSA" ) )
         {
@@ -75,19 +63,10 @@ public class ClientHandler implements Runnable {
 
         //OK handshake
         byte[] decryptedMessageReceivedOK = new byte[0];
-        if( encUser.equals( "AES" ) ) {
+        if( encUser.equals( "AES" ) || encUser.equals( "DES" )|| encUser.equals( "TripleDES" ) ) {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-            decryptedMessageReceivedOK = AES.decrypt( encryptedMessageReceivedOK , symmetricKey );
+            decryptedMessageReceivedOK = SymmetricAlgorithm.decrypt(encryptedMessageReceivedOK, symmetricKey, encUser);
         }
-        else if( encUser.equals( "DES" ) ) {
-            byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-            decryptedMessageReceivedOK = DES.decrypt( encryptedMessageReceivedOK , symmetricKey );
-        }
-        else if( encUser.equals( "TripleDES" ) ) {
-            byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-            decryptedMessageReceivedOK = TripleDES.decrypt( encryptedMessageReceivedOK , symmetricKey );
-        }
-
         else if(encUser.equals("RSA"))
         {
             ArrayList<Object> encryptedPlusPublicKey = (ArrayList<Object>) in.readObject();
@@ -100,16 +79,8 @@ public class ClientHandler implements Runnable {
         if( messageDecryptS.equals( userName ) )
         {
             System.out.println( "CLIENT_OK" );
-            if( encUser.equals( "AES" ) ) {
-                byte[] encryptedMessageSend = AES.encrypt( decryptedMessageReceivedOK , symmetricKey );
-                out.writeObject( encryptedMessageSend );
-            }
-            else if( encUser.equals( "DES" ) ) {
-                byte[] encryptedMessageSend = DES.encrypt( decryptedMessageReceivedOK , symmetricKey );
-                out.writeObject( encryptedMessageSend );
-            }
-            else if( encUser.equals( "TripleDES" ) ) {
-                byte[] encryptedMessageSend = TripleDES.encrypt( decryptedMessageReceivedOK , symmetricKey );
+            if( encUser.equals( "AES" ) || encUser.equals( "DES" )|| encUser.equals( "TripleDES" ) ) {
+                byte[] encryptedMessageSend = SymmetricAlgorithm.encrypt( decryptedMessageReceivedOK , symmetricKey, encUser );
                 out.writeObject( encryptedMessageSend );
             }
             else if( encUser.equals( "RSA" ) )
@@ -130,17 +101,9 @@ public class ClientHandler implements Runnable {
         while ( server.isConnected( ) ) {
             try {
                 byte[] message = (byte[]) in.readObject( );
-                if( encUser.equals( "AES" ) )
+                if( encUser.equals( "AES" ) || encUser.equals( "DES" )|| encUser.equals( "TripleDES" ) )
                 {
-                    message = AES.decrypt( message , this.symmetricKey );
-                }
-                else if( encUser.equals( "DES" ) )
-                {
-                    message = DES.decrypt( message , this.symmetricKey );
-                }
-                else if( encUser.equals( "TripleDES" ) )
-                {
-                    message = TripleDES.decrypt( message , this.symmetricKey );
+                    message = SymmetricAlgorithm.decrypt( message , this.symmetricKey, encUser );
                 }
                 else if( encUser.equals( "RSA" ) )
                 {
@@ -182,24 +145,8 @@ public class ClientHandler implements Runnable {
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         messageWithUserName.add( "[" + timestamp + "]" );
                     }
-                    byte[] messageEncrypted = new byte[0];
-                    if ( ( client.encUser ).equals( "AES" ) )
-                    {
-                        messageEncrypted = AES.encrypt( message , client.symmetricKey);
-                    }
-                    else if ( ( client.encUser ).equals( "DES" ) )
-                    {
-                        messageEncrypted = DES.encrypt( message , client.symmetricKey );
-                    }
-                    else if ( ( client.encUser ).equals( "TripleDES" ) )
-                    {
-                        messageEncrypted = TripleDES.encrypt( message , client.symmetricKey );
-                    }
-                    else if( ( client.encUser ).equals( "RSA" ) )
-                    {
-                        messageEncrypted = RSA.encrypt( message , client.publicClientKey );
-                    }
-                    messageWithUserName.add( messageEncrypted );
+                    byte[] messageEncrypted = serverEncryptionChoice(message, client);
+                    messageWithUserName.add(messageEncrypted);
 
                     client.out.writeObject( messageWithUserName );
                     client.out.flush( );
@@ -217,24 +164,8 @@ public class ClientHandler implements Runnable {
                 try {
                     ArrayList<Object> messageWithUserName = new ArrayList<>(2);
                     messageWithUserName.add( this.userName );
-                    byte[] messageEncrypted = new byte[0];
-                    if ( ( client.encUser ).equals( "AES" ) )
-                    {
-                        messageEncrypted = AES.encrypt( message , client.symmetricKey );
-                    }
-                    else if ( ( client.encUser ).equals( "DES" ) )
-                    {
-                        messageEncrypted = DES.encrypt( message , client.symmetricKey );
-                    }
-                    else if ( ( client.encUser ).equals( "TripleDES" ) )
-                    {
-                        messageEncrypted = TripleDES.encrypt( message , client.symmetricKey );
-                    }
-                    else if( ( client.encUser ).equals( "RSA" ) )
-                    {
-                        messageEncrypted = RSA.encrypt( message , client.publicClientKey );
-                    }
-                    messageWithUserName.add( messageEncrypted );
+                    byte[] messageEncrypted = serverEncryptionChoice(message, client);
+                    messageWithUserName.add(messageEncrypted);
 
                     String message_verify = new String( message );
                     String[] separated_message = message_verify.split(" ", 2 );
@@ -251,6 +182,19 @@ public class ClientHandler implements Runnable {
                 }
             }
         }
+    }
+
+    private byte[] serverEncryptionChoice(byte[] message, ClientHandler client) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+        byte[] messageEncrypted = new byte[0];
+        if ( ( client.encUser ).equals( "AES" ) || ( client.encUser ).equals( "DES" )|| ( client.encUser ).equals( "TripleDES" ) )
+        {
+            messageEncrypted = SymmetricAlgorithm.encrypt( message , client.symmetricKey, client.encUser );
+        }
+        else if( ( client.encUser ).equals( "RSA" ) )
+        {
+            messageEncrypted = RSA.encrypt( message , client.publicClientKey );
+        }
+        return messageEncrypted;
     }
 
     //FONTE: https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string

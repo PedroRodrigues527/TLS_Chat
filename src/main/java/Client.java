@@ -43,12 +43,11 @@ public class Client {
         helloHandShake( );
 
         //OK handshake
-        byte[] encryptedUsername = null;
-        okHandShake( encryptedUsername );
+        okHandShake( );
 
         byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
         byte[] decryptedMessageReceivedOK = new byte[0];
-        decryptMessageOkReceive( decryptedMessageReceivedOK , encryptedMessageReceivedOK );
+        decryptedMessageReceivedOK = decryptMessageOkReceive( decryptedMessageReceivedOK , encryptedMessageReceivedOK );
 
         String messageDecryptS = new String( decryptedMessageReceivedOK , StandardCharsets.UTF_8 );
         if( messageDecryptS.equals( userName ) )
@@ -69,7 +68,7 @@ public class Client {
         cipherSuite.add( hashUser );
         out.writeObject( cipherSuite );
 
-        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" )||encryptionUser.equals( "TripleDES" ) ) { //DES
+        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" )|| encryptionUser.equals( "TripleDES" ) ) {
             symmetricKey = (String) in.readObject( );
         }
         else if ( encryptionUser.equals( "RSA" ) ) {
@@ -79,14 +78,8 @@ public class Client {
     }
 
     public byte[] decryptMessageOkReceive ( byte[] decryptedMessage , byte[] encryptedMessage ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
-        if( encryptionUser.equals( "AES" ) ) {
-            decryptedMessage = AES.decrypt(encryptedMessage , symmetricKey);
-        }
-        else if(encryptionUser.equals( "DES" ) ) {
-            decryptedMessage = DES.decrypt( encryptedMessage , symmetricKey );
-        }
-        else if(encryptionUser.equals( "TripleDES" )) {
-            decryptedMessage = TripleDES.decrypt( encryptedMessage , symmetricKey );
+        if( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
+            decryptedMessage = SymmetricAlgorithm.decrypt(encryptedMessage , symmetricKey, encryptionUser);
         }
         else if(encryptionUser.equals( "RSA" ) )
         {
@@ -95,7 +88,8 @@ public class Client {
         return decryptedMessage;
     }
 
-    public void okHandShake ( byte[] encryptedUserName ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
+    public void okHandShake ( ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
+        byte[] encryptedUserName;
         if ( encryptionUser.equals( "RSA" ) ) {
             RSA rsa = new RSA();
             ArrayList<Object> keyList = rsa.generateKeyPair(keySizeUser);
@@ -107,16 +101,8 @@ public class Client {
             encryptedPlusPublicKey.add( publicKey );
             out.writeObject( encryptedPlusPublicKey );
         }
-        else if ( encryptionUser.equals( "AES" ) ) { //DES
-            encryptedUserName = AES.encrypt( userName.getBytes( StandardCharsets.UTF_8 ), symmetricKey );
-            out.writeObject( encryptedUserName );
-        }
-        else if ( encryptionUser.equals( "DES" ) ) { //DES
-            encryptedUserName = DES.encrypt( userName.getBytes(StandardCharsets.UTF_8 ), symmetricKey);
-            out.writeObject( encryptedUserName );
-        }
-        else if ( encryptionUser.equals( "TripleDES" ) ) {
-            encryptedUserName = TripleDES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+        else if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
+            encryptedUserName = SymmetricAlgorithm.encrypt( userName.getBytes( StandardCharsets.UTF_8 ), symmetricKey, encryptionUser );
             out.writeObject( encryptedUserName );
         }
     }
@@ -146,17 +132,9 @@ public class Client {
                 if ( encryptionUser.equals( "RSA" ) ){
                     messageByte = RSA.encrypt(message.getBytes(StandardCharsets.UTF_8) , publicServerKey);
                 }
-                else if (encryptionUser.equals( "AES" ) )
+                else if (encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) )
                 {
-                    messageByte = AES.encrypt(message.getBytes(StandardCharsets.UTF_8) , symmetricKey);
-                }
-                else if ( encryptionUser.equals( "DES" ) )
-                {
-                    messageByte = DES.encrypt(message.getBytes(StandardCharsets.UTF_8) , symmetricKey);
-                }
-                else if (encryptionUser.equals( "TripleDES" ))
-                {
-                    messageByte = TripleDES.encrypt( message.getBytes( StandardCharsets.UTF_8 ) , symmetricKey);
+                    messageByte = SymmetricAlgorithm.encrypt(message.getBytes(StandardCharsets.UTF_8) , symmetricKey, encryptionUser);
                 }
                 out.writeObject( messageByte );
             } catch ( IOException e ) {
@@ -177,17 +155,9 @@ public class Client {
                     ArrayList<Object> messageWithUserName = (ArrayList<Object>) in.readObject( );
                     String userName = (String) messageWithUserName.get( 0 );
                     byte[] messageEncrypted = (byte[]) messageWithUserName.get( 1 );
-                    if ( encryptionUser.equals( "AES" ) )
+                    if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) )
                     {
-                        messageEncrypted = AES.decrypt( messageEncrypted , symmetricKey );
-                    }
-                    else if ( encryptionUser.equals( "DES" ) )
-                    {
-                        messageEncrypted = DES.decrypt( messageEncrypted , symmetricKey );
-                    }
-                    else if ( encryptionUser.equals( "TripleDES" ) )
-                    {
-                        messageEncrypted = TripleDES.decrypt( messageEncrypted , symmetricKey );
+                        messageEncrypted = SymmetricAlgorithm.decrypt( messageEncrypted , symmetricKey, encryptionUser );
                     }
                     else if ( encryptionUser.equals( "RSA" ) )
                     {

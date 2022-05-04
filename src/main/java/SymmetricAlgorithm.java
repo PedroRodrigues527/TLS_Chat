@@ -2,21 +2,22 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
-public class TripleDES {
+public class SymmetricAlgorithm {
 
     private static final int ENCRYPT_MODE = 1;
     private static final int DECRYPT_MODE = 2;
 
-    public static byte[] encrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        Cipher cipher = Cipher.getInstance( "TripleDES" );
-        byte[] decodedKey = Base64.getDecoder().decode( key );
-        SecretKeySpec secretKeySpec = new SecretKeySpec( decodedKey, 0, decodedKey.length,"TripleDES" );
+    public static byte[] encrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+        Cipher cipher = Cipher.getInstance( algorithm );
+        byte[] decodedKey = Base64.getDecoder().decode(key);
+        SecretKeySpec secretKeySpec = new SecretKeySpec( decodedKey, 0, decodedKey.length,algorithm );
         cipher.init( Cipher.ENCRYPT_MODE , secretKeySpec );
         ArrayList<byte[]> textSplits = splitText( text , 15 , ENCRYPT_MODE );
         ByteArrayOutputStream output = new ByteArrayOutputStream( );
@@ -27,10 +28,10 @@ public class TripleDES {
         return output.toByteArray( );
     }
 
-    public static byte[] decrypt ( byte[] text , String key ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
-        Cipher cipher = Cipher.getInstance( "TripleDES" );
-        byte[] decodedKey = Base64.getDecoder().decode( key );
-        SecretKeySpec secretKeySpec = new SecretKeySpec( decodedKey , 0, decodedKey.length,"TripleDES" );
+    public static byte[] decrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
+        Cipher cipher = Cipher.getInstance( algorithm );
+        byte[] decodedKey = Base64.getDecoder().decode(key);
+        SecretKeySpec secretKeySpec = new SecretKeySpec( decodedKey , 0, decodedKey.length,algorithm );
         cipher.init( Cipher.DECRYPT_MODE , secretKeySpec );
         ArrayList<byte[]> textSplits = splitText( text , 16 , DECRYPT_MODE );
         ByteArrayOutputStream output = new ByteArrayOutputStream( );
@@ -71,12 +72,12 @@ public class TripleDES {
         return textSplits;
     }
 
-    public String generateKey(int sizeKey) throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance( "TripleDES" );
-        keyGenerator.init( sizeKey );
-        SecretKey key = keyGenerator.generateKey( );
+    public String generateKey(int n, String algorithm) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
+        keyGenerator.init(n);
+        SecretKey key = keyGenerator.generateKey();
         // get base64 encoded version of the key: https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa
-        return Base64.getEncoder( ).encodeToString( key.getEncoded( ) );
+        return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
 }
