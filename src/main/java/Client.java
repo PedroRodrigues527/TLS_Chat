@@ -48,7 +48,8 @@ public class Client {
         cipherSuite.add(hashUser);
         out.writeObject(cipherSuite);
 
-        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "3DES" ) ) { //DES
+        //VER AQUI E ALTERAR SE DER ERRO
+        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) ) { //DES
             symmetricKey = (String) in.readObject();
         }
         else if ( encryptionUser.equals("RSA")) {
@@ -69,15 +70,23 @@ public class Client {
             encryptedPlusPublicKey.add(publicKey);
             out.writeObject( encryptedPlusPublicKey );
         }
-        else if ( encryptionUser.equals("AES") || encryptionUser.equals( "3DES" ) ) { //DES
+        else if ( encryptionUser.equals("AES") ) { //DES
             encryptedUsername = AES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
             out.writeObject( encryptedUsername );
         }
+        else if ( encryptionUser.equals( "DES" ) ) { //DES
+            encryptedUsername = DES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+            out.writeObject( encryptedUsername );
+        }
+
 
         byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
         byte[] decryptedMessageReceivedOK = new byte[0];
         if(encryptionUser.equals("AES")) {
             decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+        else if(encryptionUser.equals("DES")) {
+            decryptedMessageReceivedOK = DES.decrypt(encryptedMessageReceivedOK, symmetricKey);
         }
         else if(encryptionUser.equals("RSA"))
         {
@@ -124,6 +133,10 @@ public class Client {
                 {
                     messageByte = AES.encrypt(message.getBytes(StandardCharsets.UTF_8), symmetricKey);
                 }
+                else if (encryptionUser.equals("DES"))
+                {
+                    messageByte = DES.encrypt(message.getBytes(StandardCharsets.UTF_8), symmetricKey);
+                }
                 out.writeObject( messageByte );
             } catch ( IOException e ) {
                 closeConnection( );
@@ -146,6 +159,10 @@ public class Client {
                     if (encryptionUser.equals("AES"))
                     {
                         messageEncrypted = AES.decrypt(messageEncrypted, symmetricKey);
+                    }
+                    else if (encryptionUser.equals("DES"))
+                    {
+                        messageEncrypted = DES.decrypt(messageEncrypted, symmetricKey);
                     }
                     else if (encryptionUser.equals("RSA"))
                     {

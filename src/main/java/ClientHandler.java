@@ -51,6 +51,11 @@ public class ClientHandler implements Runnable {
             this.symmetricKey = aes.generateKey(sizeKeyUser);
             out.writeObject( symmetricKey );
         }
+        else if ( encUser.equals( "DES" ) ){
+            DES des = new DES();
+            this.symmetricKey = des.generateKey(sizeKeyUser);
+            out.writeObject( symmetricKey );
+        }
         else if(encUser.equals("RSA"))
         {
             RSA rsa = new RSA();
@@ -66,6 +71,10 @@ public class ClientHandler implements Runnable {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
             decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
         }
+        else if(encUser.equals("DES")) {
+            byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
+            decryptedMessageReceivedOK = DES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
         else if(encUser.equals("RSA"))
         {
             ArrayList<Object> encryptedPlusPublicKey = (ArrayList<Object>) in.readObject();
@@ -80,6 +89,10 @@ public class ClientHandler implements Runnable {
             System.out.println("CLIENT_OK");
             if(encUser.equals("AES")) {
                 byte[] encryptedMessageSend = AES.encrypt(decryptedMessageReceivedOK, symmetricKey);
+                out.writeObject(encryptedMessageSend);
+            }
+            else if(encUser.equals("DES")) {
+                byte[] encryptedMessageSend = DES.encrypt(decryptedMessageReceivedOK, symmetricKey);
                 out.writeObject(encryptedMessageSend);
             }
             else if(encUser.equals("RSA"))
@@ -103,6 +116,10 @@ public class ClientHandler implements Runnable {
                 if(encUser.equals("AES"))
                 {
                     message = AES.decrypt(message, this.symmetricKey);
+                }
+                else if(encUser.equals("DES"))
+                {
+                    message = DES.decrypt(message, this.symmetricKey);
                 }
                 else if(encUser.equals("RSA"))
                 {
@@ -149,6 +166,10 @@ public class ClientHandler implements Runnable {
                     {
                         messageEncrypted = AES.encrypt(message, client.symmetricKey);
                     }
+                    else if ((client.encUser).equals("DES"))
+                    {
+                        messageEncrypted = DES.encrypt(message, client.symmetricKey);
+                    }
                     else if((client.encUser).equals("RSA"))
                     {
                         messageEncrypted = RSA.encrypt(message, client.publicClientKey);
@@ -175,6 +196,10 @@ public class ClientHandler implements Runnable {
                     if ((client.encUser).equals("AES"))
                     {
                         messageEncrypted = AES.encrypt(message, client.symmetricKey);
+                    }
+                    else if ((client.encUser).equals("DES"))
+                    {
+                        messageEncrypted = DES.encrypt(message, client.symmetricKey);
                     }
                     else if((client.encUser).equals("RSA"))
                     {
