@@ -226,6 +226,10 @@ public class ClientHandler implements Runnable {
                     {
                         messageEncrypted = DES.encrypt( message , client.symmetricKey );
                     }
+                    else if ( ( client.encUser ).equals( "TripleDES" ) )
+                    {
+                        messageEncrypted = TripleDES.encrypt( message , client.symmetricKey );
+                    }
                     else if( ( client.encUser ).equals( "RSA" ) )
                     {
                         messageEncrypted = RSA.encrypt( message , client.publicClientKey );
