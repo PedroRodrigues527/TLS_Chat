@@ -131,17 +131,13 @@ public class MainClient {
         //Insert choice
         String userchoice;
         String[] hashes = {"SHA-256", "SHA-512", "MD4", "MD5"};
-        if(Objects.equals(encryptionChoice, "RSA"))
-        {
-            return "";
+
+        System.out.println("Choose type of hash (none[default], SHA-256, SHA-512, MD4 or MD5): ");
+        userchoice = usrInput.nextLine();
+        if (!Arrays.asList(hashes).contains(userchoice)) {
+            userchoice = "none";
         }
-        else {
-            System.out.println("Choose type of hash (none[default], SHA-256, SHA-512, MD4 or MD5): ");
-            userchoice = usrInput.nextLine();
-            if (!Arrays.asList(hashes).contains(userchoice)) {
-                userchoice = "none";
-            }
-        }
+
         return userchoice;
     }
 }

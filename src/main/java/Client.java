@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -24,9 +25,9 @@ public class Client {
 
     private String symmetricKey;
 
-    private RSA rsa; //Final -> might not be initialized - ver!
-    private PublicKey receiverPublicRSAKey;
-    private BigInteger privateSharedDHKey;
+    private PublicKey publicKey;
+    private PrivateKey privateKey;
+    private PublicKey publicServerKey;
 
     public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         client = new Socket( host , port );
@@ -36,8 +37,8 @@ public class Client {
         this.hashUser = hashUser;
 
         if ( encryptionUser.equals( "RSA" ) ) {
-            rsa = new RSA( keySizeUser );
-            rsa.rsaKeyDistribution();
+            //rsa = new RSA( keySizeUser );
+            //rsa.rsaKeyDistribution();
         }
 
         out = new ObjectOutputStream(client.getOutputStream());
@@ -53,23 +54,38 @@ public class Client {
 
         if ( encryptionUser.equals( "AES" ) ) {
             symmetricKey = (String) in.readObject();
-            System.out.println("SERVER_HELLO");
         }
+        else if ( encryptionUser.equals("RSA")) {
+            publicServerKey = (PublicKey) in.readObject();
+        }
+        System.out.println("SERVER_HELLO");
 
         //OK handshake
         byte[] encryptedUsername = null;
         if ( encryptionUser.equals( "RSA" ) ) {
-
+            RSA rsa = new RSA();
+            ArrayList<Object> keyList = rsa.generateKeyPair(keySizeUser);
+            this.privateKey = (PrivateKey) keyList.get(0);
+            this.publicKey = (PublicKey) keyList.get(1);
+            encryptedUsername = RSA.encrypt(userName.getBytes(StandardCharsets.UTF_8), publicServerKey);
+            ArrayList<Object> encryptedPlusPublicKey = new ArrayList<>(2);
+            encryptedPlusPublicKey.add(encryptedUsername);
+            encryptedPlusPublicKey.add(publicKey);
+            out.writeObject( encryptedPlusPublicKey );
         }
         else if ( encryptionUser.equals("AES") ) {
             encryptedUsername = AES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+            out.writeObject( encryptedUsername );
         }
-        out.writeObject( encryptedUsername );
 
         byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
         byte[] decryptedMessageReceivedOK = new byte[0];
         if(encryptionUser.equals("AES")) {
             decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+        else if(encryptionUser.equals("RSA"))
+        {
+            decryptedMessageReceivedOK = RSA.decrypt(encryptedMessageReceivedOK, privateKey);
         }
 
         String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
@@ -106,7 +122,7 @@ public class Client {
             byte[] messageByte = new byte[0];
             try {
                 if ( encryptionUser.equals("RSA") ){
-                    rsa.sendRequest( message , out );
+                    messageByte = RSA.encrypt(message.getBytes(StandardCharsets.UTF_8), publicServerKey);
                 }
                 else if (encryptionUser.equals("AES"))
                 {
@@ -116,7 +132,7 @@ public class Client {
             } catch ( IOException e ) {
                 closeConnection( );
                 break;
-            } catch (NoSuchAlgorithmException | ClassNotFoundException | NoSuchPaddingException |
+            } catch (NoSuchAlgorithmException | NoSuchPaddingException |
                      IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
                 e.printStackTrace();
             }
@@ -134,6 +150,10 @@ public class Client {
                     if (encryptionUser.equals("AES"))
                     {
                         messageEncrypted = AES.decrypt(messageEncrypted, symmetricKey);
+                    }
+                    else if (encryptionUser.equals("RSA"))
+                    {
+                        messageEncrypted = RSA.decrypt(messageEncrypted, privateKey);
                     }
                     String messageDecrypted = new String(messageEncrypted, StandardCharsets.UTF_8);
                     System.out.println(userName + ": " + messageDecrypted);
