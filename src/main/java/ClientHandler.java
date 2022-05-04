@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,10 @@ public class ClientHandler implements Runnable {
     private final String hashUser;
 
     private String symmetricKey;
+
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
+    private PublicKey publicClientKey;
 
     public ClientHandler ( Socket server ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         this.server = server;
@@ -45,12 +51,27 @@ public class ClientHandler implements Runnable {
             this.symmetricKey = aes.generateKey(sizeKeyUser);
             out.writeObject( symmetricKey );
         }
+        else if(encUser.equals("RSA"))
+        {
+            RSA rsa = new RSA();
+            ArrayList<Object> keyList = rsa.generateKeyPair(sizeKeyUser);
+            this.privateKey = (PrivateKey) keyList.get(0);
+            this.publicKey = (PublicKey) keyList.get(1);
+            out.writeObject( publicKey );
+        }
 
         //OK handshake
-        byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
         byte[] decryptedMessageReceivedOK = new byte[0];
         if(encUser.equals("AES")) {
+            byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
             decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+        else if(encUser.equals("RSA"))
+        {
+            ArrayList<Object> encryptedPlusPublicKey = (ArrayList<Object>) in.readObject();
+            byte[] encryptedMessageUser = (byte[]) encryptedPlusPublicKey.get(0);
+            this.publicClientKey = (PublicKey) encryptedPlusPublicKey.get(1);
+            decryptedMessageReceivedOK = RSA.decrypt(encryptedMessageUser, privateKey);
         }
 
         String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
@@ -59,6 +80,11 @@ public class ClientHandler implements Runnable {
             System.out.println("CLIENT_OK");
             if(encUser.equals("AES")) {
                 byte[] encryptedMessageSend = AES.encrypt(decryptedMessageReceivedOK, symmetricKey);
+                out.writeObject(encryptedMessageSend);
+            }
+            else if(encUser.equals("RSA"))
+            {
+                byte[] encryptedMessageSend = RSA.encrypt(decryptedMessageReceivedOK, publicClientKey);
                 out.writeObject(encryptedMessageSend);
             }
         }
@@ -77,6 +103,10 @@ public class ClientHandler implements Runnable {
                 if(encUser.equals("AES"))
                 {
                     message = AES.decrypt(message, this.symmetricKey);
+                }
+                else if(encUser.equals("RSA"))
+                {
+                    message = RSA.decrypt(message, privateKey);
                 }
                 String messageDecrypted = new String(message, StandardCharsets.UTF_8);
                 if(messageDecrypted.charAt(0) != '@')
@@ -119,6 +149,10 @@ public class ClientHandler implements Runnable {
                     {
                         messageEncrypted = AES.encrypt(message, client.symmetricKey);
                     }
+                    else if((client.encUser).equals("RSA"))
+                    {
+                        messageEncrypted = RSA.encrypt(message, client.publicClientKey);
+                    }
                     messageWithUserName.add(messageEncrypted);
 
                     client.out.writeObject(messageWithUserName);
@@ -141,6 +175,10 @@ public class ClientHandler implements Runnable {
                     if ((client.encUser).equals("AES"))
                     {
                         messageEncrypted = AES.encrypt(message, client.symmetricKey);
+                    }
+                    else if((client.encUser).equals("RSA"))
+                    {
+                        messageEncrypted = RSA.encrypt(message, client.publicClientKey);
                     }
                     messageWithUserName.add(messageEncrypted);
 
