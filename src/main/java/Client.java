@@ -49,7 +49,7 @@ public class Client {
         out.writeObject(cipherSuite);
 
         //VER AQUI E ALTERAR SE DER ERRO
-        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) ) { //DES
+        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" )||encryptionUser.equals( "TripleDES" ) ) { //DES
             symmetricKey = (String) in.readObject();
         }
         else if ( encryptionUser.equals("RSA")) {
@@ -78,6 +78,10 @@ public class Client {
             encryptedUsername = DES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
             out.writeObject( encryptedUsername );
         }
+        else if ( encryptionUser.equals( "TripleDES" ) ) {
+            encryptedUsername = TripleDES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+            out.writeObject( encryptedUsername );
+        }
 
 
         byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
@@ -87,6 +91,9 @@ public class Client {
         }
         else if(encryptionUser.equals("DES")) {
             decryptedMessageReceivedOK = DES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+        else if(encryptionUser.equals("TripleDES")) {
+            decryptedMessageReceivedOK = TripleDES.decrypt(encryptedMessageReceivedOK, symmetricKey);
         }
         else if(encryptionUser.equals("RSA"))
         {
@@ -137,6 +144,10 @@ public class Client {
                 {
                     messageByte = DES.encrypt(message.getBytes(StandardCharsets.UTF_8), symmetricKey);
                 }
+                else if (encryptionUser.equals("TripleDES"))
+                {
+                    messageByte = TripleDES.encrypt(message.getBytes(StandardCharsets.UTF_8), symmetricKey);
+                }
                 out.writeObject( messageByte );
             } catch ( IOException e ) {
                 closeConnection( );
@@ -163,6 +174,10 @@ public class Client {
                     else if (encryptionUser.equals("DES"))
                     {
                         messageEncrypted = DES.decrypt(messageEncrypted, symmetricKey);
+                    }
+                    else if (encryptionUser.equals("TripleDES"))
+                    {
+                        messageEncrypted = TripleDES.decrypt(messageEncrypted, symmetricKey);
                     }
                     else if (encryptionUser.equals("RSA"))
                     {
