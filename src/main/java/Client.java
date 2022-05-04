@@ -29,6 +29,9 @@ public class Client {
     private PrivateKey privateKey;
     private PublicKey publicServerKey;
 
+
+
+
     public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         client = new Socket( host , port );
         this.userName = userName;
@@ -36,69 +39,19 @@ public class Client {
         this.keySizeUser = keySizeUser;
         this.hashUser = hashUser;
 
-
         out = new ObjectOutputStream(client.getOutputStream());
         in = new ObjectInputStream(client.getInputStream());
 
         //HELLO handshake
-        ArrayList<Object> cipherSuite = new ArrayList<>(4);
-        cipherSuite.add(userName);
-        cipherSuite.add(encryptionUser);
-        cipherSuite.add(keySizeUser);
-        cipherSuite.add(hashUser);
-        out.writeObject(cipherSuite);
-
-        //VER AQUI E ALTERAR SE DER ERRO
-        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" )||encryptionUser.equals( "TripleDES" ) ) { //DES
-            symmetricKey = (String) in.readObject();
-        }
-        else if ( encryptionUser.equals("RSA")) {
-            publicServerKey = (PublicKey) in.readObject();
-        }
-        System.out.println("SERVER_HELLO");
+        helloHandShake( );
 
         //OK handshake
         byte[] encryptedUsername = null;
-        if ( encryptionUser.equals( "RSA" ) ) {
-            RSA rsa = new RSA();
-            ArrayList<Object> keyList = rsa.generateKeyPair(keySizeUser);
-            this.privateKey = (PrivateKey) keyList.get(0);
-            this.publicKey = (PublicKey) keyList.get(1);
-            encryptedUsername = RSA.encrypt(userName.getBytes(StandardCharsets.UTF_8), publicServerKey);
-            ArrayList<Object> encryptedPlusPublicKey = new ArrayList<>(2);
-            encryptedPlusPublicKey.add(encryptedUsername);
-            encryptedPlusPublicKey.add(publicKey);
-            out.writeObject( encryptedPlusPublicKey );
-        }
-        else if ( encryptionUser.equals("AES") ) { //DES
-            encryptedUsername = AES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
-            out.writeObject( encryptedUsername );
-        }
-        else if ( encryptionUser.equals( "DES" ) ) { //DES
-            encryptedUsername = DES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
-            out.writeObject( encryptedUsername );
-        }
-        else if ( encryptionUser.equals( "TripleDES" ) ) {
-            encryptedUsername = TripleDES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
-            out.writeObject( encryptedUsername );
-        }
-
+        okHandShake( encryptedUsername );
 
         byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
         byte[] decryptedMessageReceivedOK = new byte[0];
-        if(encryptionUser.equals("AES")) {
-            decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
-        }
-        else if(encryptionUser.equals("DES")) {
-            decryptedMessageReceivedOK = DES.decrypt(encryptedMessageReceivedOK, symmetricKey);
-        }
-        else if(encryptionUser.equals("TripleDES")) {
-            decryptedMessageReceivedOK = TripleDES.decrypt(encryptedMessageReceivedOK, symmetricKey);
-        }
-        else if(encryptionUser.equals("RSA"))
-        {
-            decryptedMessageReceivedOK = RSA.decrypt(encryptedMessageReceivedOK, privateKey);
-        }
+        decryptMessageOkReceive( decryptedMessageReceivedOK , encryptedMessageReceivedOK );
 
         String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
         if(messageDecryptS.equals(userName))
@@ -109,6 +62,66 @@ public class Client {
         //Announcement message
         out.writeObject("O cliente '" + userName + "' ligou-se ao Chat.");
         System.out.println("Agora já pode enviar mensagens no Chat.");
+    }
+
+    public void helloHandShake () throws IOException, ClassNotFoundException {
+        ArrayList<Object> cipherSuite = new ArrayList<>(4);
+        cipherSuite.add(userName);
+        cipherSuite.add(encryptionUser);
+        cipherSuite.add(keySizeUser);
+        cipherSuite.add(hashUser);
+        out.writeObject(cipherSuite);
+
+        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" )||encryptionUser.equals( "TripleDES" ) ) { //DES
+            symmetricKey = (String) in.readObject();
+        }
+        else if ( encryptionUser.equals("RSA")) {
+            publicServerKey = (PublicKey) in.readObject();
+        }
+        System.out.println("SERVER_HELLO");
+    }
+
+    public byte[] decryptMessageOkReceive ( byte[] decryptedMessage , byte[] encryptedMessage ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
+        if(encryptionUser.equals("AES")) {
+            decryptedMessage = AES.decrypt(encryptedMessage, symmetricKey);
+        }
+        else if(encryptionUser.equals("DES")) {
+            decryptedMessage = DES.decrypt(encryptedMessage, symmetricKey);
+        }
+        else if(encryptionUser.equals("TripleDES")) {
+            decryptedMessage = TripleDES.decrypt(encryptedMessage, symmetricKey);
+        }
+        else if(encryptionUser.equals("RSA"))
+        {
+            decryptedMessage = RSA.decrypt(encryptedMessage, privateKey);
+        }
+        return decryptedMessage;
+    }
+
+    public void okHandShake ( byte[] encryptedUserName ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
+        if ( encryptionUser.equals( "RSA" ) ) {
+            RSA rsa = new RSA();
+            ArrayList<Object> keyList = rsa.generateKeyPair(keySizeUser);
+            this.privateKey = (PrivateKey) keyList.get(0);
+            this.publicKey = (PublicKey) keyList.get(1);
+            encryptedUserName = RSA.encrypt(userName.getBytes(StandardCharsets.UTF_8), publicServerKey);
+            ArrayList<Object> encryptedPlusPublicKey = new ArrayList<>(2);
+            encryptedPlusPublicKey.add(encryptedUserName);
+            encryptedPlusPublicKey.add(publicKey);
+            out.writeObject( encryptedPlusPublicKey );
+        }
+        else if ( encryptionUser.equals("AES") ) { //DES
+            encryptedUserName = AES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+            out.writeObject( encryptedUserName );
+        }
+        else if ( encryptionUser.equals( "DES" ) ) { //DES
+            encryptedUserName = DES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+            out.writeObject( encryptedUserName );
+        }
+        else if ( encryptionUser.equals( "TripleDES" ) ) {
+            encryptedUserName = TripleDES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
+            out.writeObject( encryptedUserName );
+        }
     }
 
     public String getEncryptionUser() {
