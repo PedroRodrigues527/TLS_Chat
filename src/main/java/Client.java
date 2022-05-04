@@ -36,10 +36,6 @@ public class Client {
         this.keySizeUser = keySizeUser;
         this.hashUser = hashUser;
 
-        if ( encryptionUser.equals( "RSA" ) ) {
-            //rsa = new RSA( keySizeUser );
-            //rsa.rsaKeyDistribution();
-        }
 
         out = new ObjectOutputStream(client.getOutputStream());
         in = new ObjectInputStream(client.getInputStream());
@@ -52,7 +48,7 @@ public class Client {
         cipherSuite.add(hashUser);
         out.writeObject(cipherSuite);
 
-        if ( encryptionUser.equals( "AES" ) ) {
+        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "3DES" ) ) { //DES
             symmetricKey = (String) in.readObject();
         }
         else if ( encryptionUser.equals("RSA")) {
@@ -73,7 +69,7 @@ public class Client {
             encryptedPlusPublicKey.add(publicKey);
             out.writeObject( encryptedPlusPublicKey );
         }
-        else if ( encryptionUser.equals("AES") ) {
+        else if ( encryptionUser.equals("AES") || encryptionUser.equals( "3DES" ) ) { //DES
             encryptedUsername = AES.encrypt(userName.getBytes(StandardCharsets.UTF_8), symmetricKey);
             out.writeObject( encryptedUsername );
         }
