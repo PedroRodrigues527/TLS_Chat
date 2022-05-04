@@ -62,7 +62,7 @@ class MainClientTest {
             PrintStream printStream = new PrintStream(baos);
             System.setOut(printStream);
 
-            String userNameOutput = MainClient.usernameChoice(); // call the main method
+            String userNameOutput = MainClient.usernameChoice(); // call the username method
 
 
             String userInput2 = String.format("%stest%s",
