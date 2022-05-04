@@ -56,6 +56,13 @@ public class ClientHandler implements Runnable {
             this.symmetricKey = des.generateKey(sizeKeyUser);
             out.writeObject( symmetricKey );
         }
+        else if(encUser.equals("TripleDES"))
+        {
+            TripleDES tripledes=new TripleDES();
+            this.symmetricKey = tripledes.generateKey(sizeKeyUser);
+            out.writeObject( symmetricKey );
+
+        }
         else if(encUser.equals("RSA"))
         {
             RSA rsa = new RSA();
@@ -64,6 +71,7 @@ public class ClientHandler implements Runnable {
             this.publicKey = (PublicKey) keyList.get(1);
             out.writeObject( publicKey );
         }
+
 
         //OK handshake
         byte[] decryptedMessageReceivedOK = new byte[0];
@@ -75,6 +83,11 @@ public class ClientHandler implements Runnable {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
             decryptedMessageReceivedOK = DES.decrypt(encryptedMessageReceivedOK, symmetricKey);
         }
+        else if(encUser.equals("TripleDES")) {
+            byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
+            decryptedMessageReceivedOK = TripleDES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+        }
+
         else if(encUser.equals("RSA"))
         {
             ArrayList<Object> encryptedPlusPublicKey = (ArrayList<Object>) in.readObject();
@@ -93,6 +106,10 @@ public class ClientHandler implements Runnable {
             }
             else if(encUser.equals("DES")) {
                 byte[] encryptedMessageSend = DES.encrypt(decryptedMessageReceivedOK, symmetricKey);
+                out.writeObject(encryptedMessageSend);
+            }
+            else if(encUser.equals("TripleDES")) {
+                byte[] encryptedMessageSend = TripleDES.encrypt(decryptedMessageReceivedOK, symmetricKey);
                 out.writeObject(encryptedMessageSend);
             }
             else if(encUser.equals("RSA"))
@@ -120,6 +137,10 @@ public class ClientHandler implements Runnable {
                 else if(encUser.equals("DES"))
                 {
                     message = DES.decrypt(message, this.symmetricKey);
+                }
+                else if(encUser.equals("TripleDES"))
+                {
+                    message = TripleDES.decrypt(message, this.symmetricKey);
                 }
                 else if(encUser.equals("RSA"))
                 {
@@ -169,6 +190,10 @@ public class ClientHandler implements Runnable {
                     else if ((client.encUser).equals("DES"))
                     {
                         messageEncrypted = DES.encrypt(message, client.symmetricKey);
+                    }
+                    else if ((client.encUser).equals("TripleDES"))
+                    {
+                        messageEncrypted = TripleDES.encrypt(message, client.symmetricKey);
                     }
                     else if((client.encUser).equals("RSA"))
                     {
