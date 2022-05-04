@@ -89,19 +89,11 @@ public class MainClient {
                     }
                     break;
                 case "DES":
-                    System.out.println( "Choose key size (56 , 112, or 168 bits):");
-                    userchoice=usrInput.nextLine();
-                    String[] keySizes_des = {"56", "112", "168"};
-                    if( !Arrays.asList(keySizes_des).contains(userchoice))
-                    {
-                        System.out.println( "ERROR: Unknown choice. Back to Choose Key Size..." );
-                    }
-                    else
-                    {
-                        key_size_choice = Integer.parseInt(userchoice);
-                    }
+                    System.out.println( " Key size = 56 !");
+                    key_size_choice = 56;
                     break;
                 case "3DES":
+                    System.out.println( " Key size = 168 ! ");
                     key_size_choice = 168;
                     break;
                 case "RSA":
@@ -131,17 +123,13 @@ public class MainClient {
         //Insert choice
         String userchoice;
         String[] hashes = {"SHA-256", "SHA-512", "MD4", "MD5"};
-        if(Objects.equals(encryptionChoice, "RSA"))
-        {
-            return "";
+
+        System.out.println("Choose type of hash (none[default], SHA-256, SHA-512, MD4 or MD5): ");
+        userchoice = usrInput.nextLine();
+        if (!Arrays.asList(hashes).contains(userchoice)) {
+            userchoice = "none";
         }
-        else {
-            System.out.println("Choose type of hash (none[default], SHA-256, SHA-512, MD4 or MD5): ");
-            userchoice = usrInput.nextLine();
-            if (!Arrays.asList(hashes).contains(userchoice)) {
-                userchoice = "none";
-            }
-        }
+
         return userchoice;
     }
 }
