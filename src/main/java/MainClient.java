@@ -53,9 +53,9 @@ public class MainClient {
 
         //Insert encryption choice
         String userchoice;
-        String[] encryptions = {"AES", "DES", "3DES", "RSA"};
+        String[] encryptions = {"AES", "DES", "TripleDES", "RSA"};
         do {
-            System.out.println( "Choose type of encryption (AES, DES, 3DES or RSA): ");
+            System.out.println( "Choose type of encryption (AES, DES, TripleDES or RSA): ");
             userchoice = usrInput.nextLine();
             if ( !Arrays.asList(encryptions).contains(userchoice) )
             {
@@ -92,7 +92,7 @@ public class MainClient {
                     System.out.println( "Key size = 56 bits" );
                     key_size_choice = 56;
                     break;
-                case "3DES":
+                case "TripleDES":
                     System.out.println( "Key size = 168 bits" );
                     key_size_choice = 168;
                     break;
