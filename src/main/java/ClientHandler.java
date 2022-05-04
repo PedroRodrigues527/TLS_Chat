@@ -43,79 +43,79 @@ public class ClientHandler implements Runnable {
         this.encUser = (String) clientHello.get( 1 );
         this.sizeKeyUser = (int) clientHello.get( 2 );
         this.hashUser = (String) clientHello.get( 3 );
-        System.out.println("CLIENT_HELLO");
+        System.out.println( "CLIENT_HELLO" );
 
-        if(encUser.equals("AES"))
+        if( encUser.equals( "AES" ) )
         {
             AES aes = new AES();
-            this.symmetricKey = aes.generateKey(sizeKeyUser);
+            this.symmetricKey = aes.generateKey( sizeKeyUser );
             out.writeObject( symmetricKey );
         }
         else if ( encUser.equals( "DES" ) ){
             DES des = new DES();
-            this.symmetricKey = des.generateKey(sizeKeyUser);
+            this.symmetricKey = des.generateKey( sizeKeyUser );
             out.writeObject( symmetricKey );
         }
-        else if(encUser.equals("TripleDES"))
+        else if( encUser.equals( "TripleDES" ) )
         {
             TripleDES tripledes=new TripleDES();
-            this.symmetricKey = tripledes.generateKey(sizeKeyUser);
+            this.symmetricKey = tripledes.generateKey( sizeKeyUser );
             out.writeObject( symmetricKey );
 
         }
-        else if(encUser.equals("RSA"))
+        else if( encUser.equals( "RSA" ) )
         {
             RSA rsa = new RSA();
-            ArrayList<Object> keyList = rsa.generateKeyPair(sizeKeyUser);
-            this.privateKey = (PrivateKey) keyList.get(0);
-            this.publicKey = (PublicKey) keyList.get(1);
+            ArrayList<Object> keyList = rsa.generateKeyPair( sizeKeyUser );
+            this.privateKey = ( PrivateKey ) keyList.get( 0 );
+            this.publicKey = ( PublicKey ) keyList.get( 1 );
             out.writeObject( publicKey );
         }
 
 
         //OK handshake
         byte[] decryptedMessageReceivedOK = new byte[0];
-        if(encUser.equals("AES")) {
+        if( encUser.equals( "AES" ) ) {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-            decryptedMessageReceivedOK = AES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+            decryptedMessageReceivedOK = AES.decrypt( encryptedMessageReceivedOK , symmetricKey );
         }
-        else if(encUser.equals("DES")) {
+        else if( encUser.equals( "DES" ) ) {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-            decryptedMessageReceivedOK = DES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+            decryptedMessageReceivedOK = DES.decrypt( encryptedMessageReceivedOK , symmetricKey );
         }
-        else if(encUser.equals("TripleDES")) {
+        else if( encUser.equals( "TripleDES" ) ) {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-            decryptedMessageReceivedOK = TripleDES.decrypt(encryptedMessageReceivedOK, symmetricKey);
+            decryptedMessageReceivedOK = TripleDES.decrypt( encryptedMessageReceivedOK , symmetricKey );
         }
 
         else if(encUser.equals("RSA"))
         {
             ArrayList<Object> encryptedPlusPublicKey = (ArrayList<Object>) in.readObject();
-            byte[] encryptedMessageUser = (byte[]) encryptedPlusPublicKey.get(0);
-            this.publicClientKey = (PublicKey) encryptedPlusPublicKey.get(1);
-            decryptedMessageReceivedOK = RSA.decrypt(encryptedMessageUser, privateKey);
+            byte[] encryptedMessageUser = (byte[]) encryptedPlusPublicKey.get( 0 );
+            this.publicClientKey = (PublicKey) encryptedPlusPublicKey.get( 1 );
+            decryptedMessageReceivedOK = RSA.decrypt( encryptedMessageUser , privateKey );
         }
 
         String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
-        if(messageDecryptS.equals(userName))
+        if( messageDecryptS.equals( userName ) )
         {
-            System.out.println("CLIENT_OK");
-            if(encUser.equals("AES")) {
-                byte[] encryptedMessageSend = AES.encrypt(decryptedMessageReceivedOK, symmetricKey);
-                out.writeObject(encryptedMessageSend);
+            System.out.println( "CLIENT_OK" );
+            if( encUser.equals( "AES" ) ) {
+                byte[] encryptedMessageSend = AES.encrypt( decryptedMessageReceivedOK , symmetricKey );
+                out.writeObject( encryptedMessageSend );
             }
-            else if(encUser.equals("DES")) {
-                byte[] encryptedMessageSend = DES.encrypt(decryptedMessageReceivedOK, symmetricKey);
-                out.writeObject(encryptedMessageSend);
+            else if( encUser.equals( "DES" ) ) {
+                byte[] encryptedMessageSend = DES.encrypt( decryptedMessageReceivedOK , symmetricKey );
+                out.writeObject( encryptedMessageSend );
             }
-            else if(encUser.equals("TripleDES")) {
-                byte[] encryptedMessageSend = TripleDES.encrypt(decryptedMessageReceivedOK, symmetricKey);
-                out.writeObject(encryptedMessageSend);
+            else if( encUser.equals( "TripleDES" ) ) {
+                byte[] encryptedMessageSend = TripleDES.encrypt( decryptedMessageReceivedOK , symmetricKey );
+                out.writeObject( encryptedMessageSend );
             }
-            else if(encUser.equals("RSA"))
+            else if( encUser.equals( "RSA" ) )
             {
-                byte[] encryptedMessageSend = RSA.encrypt(decryptedMessageReceivedOK, publicClientKey);
-                out.writeObject(encryptedMessageSend);
+                byte[] encryptedMessageSend = RSA.encrypt( decryptedMessageReceivedOK , publicClientKey );
+                out.writeObject( encryptedMessageSend );
             }
         }
 
@@ -130,28 +130,28 @@ public class ClientHandler implements Runnable {
         while ( server.isConnected( ) ) {
             try {
                 byte[] message = (byte[]) in.readObject( );
-                if(encUser.equals("AES"))
+                if( encUser.equals( "AES" ) )
                 {
-                    message = AES.decrypt(message, this.symmetricKey);
+                    message = AES.decrypt( message , this.symmetricKey );
                 }
-                else if(encUser.equals("DES"))
+                else if( encUser.equals( "DES" ) )
                 {
-                    message = DES.decrypt(message, this.symmetricKey);
+                    message = DES.decrypt( message , this.symmetricKey );
                 }
-                else if(encUser.equals("TripleDES"))
+                else if( encUser.equals( "TripleDES" ) )
                 {
-                    message = TripleDES.decrypt(message, this.symmetricKey);
+                    message = TripleDES.decrypt( message , this.symmetricKey );
                 }
-                else if(encUser.equals("RSA"))
+                else if( encUser.equals( "RSA" ) )
                 {
-                    message = RSA.decrypt(message, privateKey);
+                    message = RSA.decrypt( message , privateKey );
                 }
-                String messageDecrypted = new String(message, StandardCharsets.UTF_8);
-                if(messageDecrypted.charAt(0) != '@')
-                    broadcastMessage(messageDecrypted.getBytes(StandardCharsets.UTF_8), false);
+                String messageDecrypted = new String( message , StandardCharsets.UTF_8 );
+                if( messageDecrypted.charAt(0) != '@' )
+                    broadcastMessage( messageDecrypted.getBytes( StandardCharsets.UTF_8) , false );
                 else
-                    specificMessage(messageDecrypted.getBytes(StandardCharsets.UTF_8));
-            } catch (IOException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException |
+                    specificMessage( messageDecrypted.getBytes( StandardCharsets.UTF_8 ) );
+            } catch ( IOException | ClassNotFoundException | NoSuchPaddingException | IllegalBlockSizeException |
                      NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e ) {
                 try {
                     removeClient( this );
@@ -171,38 +171,38 @@ public class ClientHandler implements Runnable {
         out.close( );
     }
 
-    public void broadcastMessage ( byte[] message, boolean isAnnouncement) throws IOException {
+    public void broadcastMessage ( byte[] message, boolean isAnnouncement ) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
             if ( ! this.equals( client ) ) {
                 try {
                     ArrayList<Object> messageWithUserName = new ArrayList<>(2);
-                    if (!isAnnouncement) {
-                        messageWithUserName.add(this.userName);
+                    if ( !isAnnouncement ) {
+                        messageWithUserName.add( this.userName );
                     } else {
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                        messageWithUserName.add("[" + timestamp + "]");
+                        messageWithUserName.add( "[" + timestamp + "]" );
                     }
                     byte[] messageEncrypted = new byte[0];
-                    if ((client.encUser).equals("AES"))
+                    if ( ( client.encUser ).equals( "AES" ) )
                     {
-                        messageEncrypted = AES.encrypt(message, client.symmetricKey);
+                        messageEncrypted = AES.encrypt( message , client.symmetricKey);
                     }
-                    else if ((client.encUser).equals("DES"))
+                    else if ( ( client.encUser ).equals( "DES" ) )
                     {
-                        messageEncrypted = DES.encrypt(message, client.symmetricKey);
+                        messageEncrypted = DES.encrypt( message , client.symmetricKey );
                     }
-                    else if ((client.encUser).equals("TripleDES"))
+                    else if ( ( client.encUser ).equals( "TripleDES" ) )
                     {
-                        messageEncrypted = TripleDES.encrypt(message, client.symmetricKey);
+                        messageEncrypted = TripleDES.encrypt( message , client.symmetricKey );
                     }
-                    else if((client.encUser).equals("RSA"))
+                    else if( ( client.encUser ).equals( "RSA" ) )
                     {
-                        messageEncrypted = RSA.encrypt(message, client.publicClientKey);
+                        messageEncrypted = RSA.encrypt( message , client.publicClientKey );
                     }
-                    messageWithUserName.add(messageEncrypted);
+                    messageWithUserName.add( messageEncrypted );
 
-                    client.out.writeObject(messageWithUserName);
-                    client.out.flush();
+                    client.out.writeObject( messageWithUserName );
+                    client.out.flush( );
                 } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
                          BadPaddingException | InvalidKeyException e) {
                     removeClient(client);
@@ -216,29 +216,29 @@ public class ClientHandler implements Runnable {
             if (!this.equals(client)) {
                 try {
                     ArrayList<Object> messageWithUserName = new ArrayList<>(2);
-                    messageWithUserName.add(this.userName);
+                    messageWithUserName.add( this.userName );
                     byte[] messageEncrypted = new byte[0];
-                    if ((client.encUser).equals("AES"))
+                    if ( ( client.encUser ).equals( "AES" ) )
                     {
-                        messageEncrypted = AES.encrypt(message, client.symmetricKey);
+                        messageEncrypted = AES.encrypt( message , client.symmetricKey );
                     }
-                    else if ((client.encUser).equals("DES"))
+                    else if ( ( client.encUser ).equals( "DES" ) )
                     {
-                        messageEncrypted = DES.encrypt(message, client.symmetricKey);
+                        messageEncrypted = DES.encrypt( message , client.symmetricKey );
                     }
-                    else if((client.encUser).equals("RSA"))
+                    else if( ( client.encUser ).equals( "RSA" ) )
                     {
-                        messageEncrypted = RSA.encrypt(message, client.publicClientKey);
+                        messageEncrypted = RSA.encrypt( message , client.publicClientKey );
                     }
-                    messageWithUserName.add(messageEncrypted);
+                    messageWithUserName.add( messageEncrypted );
 
                     String message_verify = new String( message );
-                    String[] separated_message = message_verify.split(" ", 2);
-                    String[] users = separated_message[0].split(",@", countChar(separated_message[1], "@"));
-                    users[0] = users[0].substring(1);
+                    String[] separated_message = message_verify.split(" ", 2 );
+                    String[] users = separated_message[0].split(",@", countChar( separated_message[1], "@" ) );
+                    users[0] = users[0].substring(1 );
 
-                    if ( Arrays.asList(users).contains(client.userName) ) {
-                        client.out.writeObject(messageWithUserName);
+                    if ( Arrays.asList( users ).contains( client.userName ) ) {
+                        client.out.writeObject( messageWithUserName );
                         client.out.flush();
                     }
                 } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
@@ -250,7 +250,7 @@ public class ClientHandler implements Runnable {
     }
 
     //FONTE: https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string
-    public static int countChar(String str, String target) {
-        return (str.length() - str.replace(target, "").length()) / target.length();
+    public static int countChar( String str, String target ) {
+        return ( str.length() - str.replace( target, "" ).length( ) ) / target.length( );
     }
 }
