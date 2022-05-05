@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HMac {
 
+    //FONTE: https://www.baeldung.com/java-hmac
     public static byte[] hmacWithJava(String algorithm, String data, String key)
             throws NoSuchAlgorithmException, InvalidKeyException {
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);

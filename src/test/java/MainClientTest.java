@@ -122,20 +122,20 @@ class MainClientTest {
                     System.lineSeparator());
             detectInputOutput(userInput);
 
-            String hashOutput = MainClient.hashChoice("AES"); // call the hash choice method
+            String hashOutput = MainClient.hashChoice(); // call the hash choice method
 
 
-            String userInput2 = String.format("SHA-256%s",
+            String userInput2 = String.format("SHA256%s",
                     System.lineSeparator());
             detectInputOutput(userInput2);
 
-            String hashOutput2 = MainClient.hashChoice("RSA");
+            String hashOutput2 = MainClient.hashChoice();
 
             // checkout output
             assertAll(
-                    () -> assertEquals("SHA-256",hashOutput2),
+                    () -> assertEquals("SHA256",hashOutput2),
                     () -> assertEquals("none",hashOutput),
-                    () -> assertNotEquals("SHA-512",hashOutput2)
+                    () -> assertNotEquals("SHA512",hashOutput2)
             );
         }
     }

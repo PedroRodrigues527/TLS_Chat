@@ -2,7 +2,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class MainClient {
             keyUserSize = keySizeChoice(encryptionUser);
 
             //Insert hash mode
-            hashUser = hashChoice(encryptionUser);
+            hashUser = hashChoice();
         }
         else
         {
@@ -128,15 +128,15 @@ public class MainClient {
         return key_size_choice;
     }
 
-    public static String hashChoice(String encryptionChoice)
+    public static String hashChoice()
     {
         Scanner usrInput = new Scanner( System.in );
 
         //Insert choice
         String userchoice;
-        String[] hashes = { "SHA256" , "SHA512" , "MD4" , "MD5" };
+        String[] hashes = { "SHA1", "SHA224", "SHA256" , "SHA384" , "SHA512" , "MD5" };
 
-        System.out.println( "Choose type of hash (none[default], SHA256, SHA512, MD4 or MD5): " );
+        System.out.println( "Choose type of hash (none[default], SHA1, SHA224, SHA256, SHA384, SHA512 or MD5): " );
         userchoice = usrInput.nextLine( );
         if (!Arrays.asList( hashes ).contains( userchoice ) ) {
             userchoice = "none";
