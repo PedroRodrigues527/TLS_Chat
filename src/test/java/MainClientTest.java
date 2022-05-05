@@ -11,12 +11,22 @@ import java.net.http.HttpResponse;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainClientTest {
 
+    public void detectInputOutput(String userInput)
+    {
+        ByteArrayInputStream bais = new ByteArrayInputStream(userInput.getBytes());
+        System.setIn(bais);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+        System.setOut(printStream);
+    }
     @Nested
     @DisplayName("Client choices' tests")
     class ChoiceTests
@@ -26,12 +36,7 @@ class MainClientTest {
         public void testUsernameChoice() {
             String userInput = String.format("User%s",
                     System.lineSeparator());
-            ByteArrayInputStream bais = new ByteArrayInputStream(userInput.getBytes());
-            System.setIn(bais);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(baos);
-            System.setOut(printStream);
+            detectInputOutput(userInput);
 
             String userNameOutput = MainClient.usernameChoice(); // call the username choice method
 
@@ -39,12 +44,7 @@ class MainClientTest {
             String userInput2 = String.format("%stest%s",
                     System.lineSeparator(),
                     System.lineSeparator());
-            ByteArrayInputStream bais2 = new ByteArrayInputStream(userInput2.getBytes());
-            System.setIn(bais2);
-
-            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-            PrintStream printStream2 = new PrintStream(baos2);
-            System.setOut(printStream2);
+            detectInputOutput(userInput2);
 
             String userNameOutput2 = MainClient.usernameChoice();
 
@@ -60,12 +60,7 @@ class MainClientTest {
         public void testEncryptionChoice() {
             String userInput = String.format("RSA%s",
                     System.lineSeparator());
-            ByteArrayInputStream bais = new ByteArrayInputStream(userInput.getBytes());
-            System.setIn(bais);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(baos);
-            System.setOut(printStream);
+            detectInputOutput(userInput);
 
             String encryptionOutput = MainClient.encryptionChoice(); // call the encryption choice method
 
@@ -74,12 +69,7 @@ class MainClientTest {
                     System.lineSeparator(),
                     System.lineSeparator(),
                     System.lineSeparator());
-            ByteArrayInputStream bais2 = new ByteArrayInputStream(userInput2.getBytes());
-            System.setIn(bais2);
-
-            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-            PrintStream printStream2 = new PrintStream(baos2);
-            System.setOut(printStream2);
+            detectInputOutput(userInput2);
 
             String encryptionOutput2 = MainClient.encryptionChoice();
 
@@ -94,14 +84,10 @@ class MainClientTest {
         @DisplayName ("Test key size choice")
         @Test
         public void testKeySizeChoice() {
-            String userInput = String.format("128%s",
+            String userInput = String.format("%s128%s",
+                    System.lineSeparator(),
                     System.lineSeparator());
-            ByteArrayInputStream bais = new ByteArrayInputStream(userInput.getBytes());
-            System.setIn(bais);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(baos);
-            System.setOut(printStream);
+            detectInputOutput(userInput);
 
             int keySizeOutput = MainClient.keySizeChoice("AES"); // call the key size choice method
 
@@ -110,23 +96,83 @@ class MainClientTest {
                     System.lineSeparator(),
                     System.lineSeparator(),
                     System.lineSeparator());
-            ByteArrayInputStream bais2 = new ByteArrayInputStream(userInput2.getBytes());
-            System.setIn(bais2);
-
-            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-            PrintStream printStream2 = new PrintStream(baos2);
-            System.setOut(printStream2);
+            detectInputOutput(userInput2);
 
             int keySizeOutput2 = MainClient.keySizeChoice("RSA");
+
+            int keySizeOutput3 = MainClient.keySizeChoice("DES");
+
+            int keySizeOutput4 = MainClient.keySizeChoice("TripleDES");
 
             // checkout output
             assertAll(
                     () -> assertEquals(1024,keySizeOutput2),
                     () -> assertEquals(128,keySizeOutput),
-                    () -> assertNotEquals(1,keySizeOutput2)
+                    () -> assertNotEquals(1,keySizeOutput2),
+                    () -> assertEquals(56,keySizeOutput3),
+                    () -> assertEquals(168,keySizeOutput4),
+                    () -> assertNotEquals(112,keySizeOutput4)
+            );
+        }
+
+        @DisplayName ("Test hash choice")
+        @Test
+        public void testHashChoice() {
+            String userInput = String.format("%s",
+                    System.lineSeparator());
+            detectInputOutput(userInput);
+
+            String hashOutput = MainClient.hashChoice("AES"); // call the hash choice method
+
+
+            String userInput2 = String.format("SHA-256%s",
+                    System.lineSeparator());
+            detectInputOutput(userInput2);
+
+            String hashOutput2 = MainClient.hashChoice("RSA");
+
+            // checkout output
+            assertAll(
+                    () -> assertEquals("SHA-256",hashOutput2),
+                    () -> assertEquals("none",hashOutput),
+                    () -> assertNotEquals("SHA-512",hashOutput2)
             );
         }
     }
 
+   /* @Nested
+    @DisplayName("MainClient Test")
+    class testMainClient
+    {
+        private Server server;
+        private Thread serverThread;
 
+        @BeforeEach
+        void setUp() throws IOException {
+            this.server = new Server(8000);
+            serverThread = new Thread( server );
+            serverThread.start();
+            try{
+                serverThread.join();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            MainServer.main(new String[0]);
+        }
+
+        @DisplayName ("Test client choices")
+        @Test
+        public void testClientChoices() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ClassNotFoundException {
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream printStream = new PrintStream(baos);
+            System.setOut(printStream);
+
+            String[] userInput = {"user", "DES", "56", "none"};
+            MainClient.main(userInput);
+
+            assertEquals("t", baos.toString());
+        }
+
+    }*/
 }

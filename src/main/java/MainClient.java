@@ -2,6 +2,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -11,19 +12,30 @@ import java.util.Scanner;
 public class MainClient {
 
     public static void main ( String[] args ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        //Insert username
-        String userName = usernameChoice( );
+        String userName, encryptionUser, hashUser;
+        int keyUserSize;
+        if(args.length == 0) {
+            //Insert username
+            userName = usernameChoice();
 
-        //Insert encryption choice
-        String encryptionUser = encryptionChoice( );
+            //Insert encryption choice
+            encryptionUser = encryptionChoice();
 
-        //Insert key size
-        int keyUserSize = keySizeChoice( encryptionUser );
+            //Insert key size
+            keyUserSize = keySizeChoice(encryptionUser);
 
-        //Insert hash mode
-        String hashUser = hashChoice( encryptionUser );
+            //Insert hash mode
+            hashUser = hashChoice(encryptionUser);
+        }
+        else
+        {
+            userName = args[0];
+            encryptionUser = args[1];
+            keyUserSize = Integer.parseInt(args[2]);
+            hashUser = args[3];
+        }
 
-        //System.out.println("User " + userName + " uses " + encryptionUser + " with key size " + keyUserSize + " with hash " + hashUser);
+        System.out.println("Connecting to server...");
 
         Client client = new Client( "127.0.0.1" , 8000 , userName, encryptionUser, keyUserSize, hashUser );
         client.readMessages( );
