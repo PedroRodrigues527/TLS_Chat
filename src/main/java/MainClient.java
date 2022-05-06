@@ -1,17 +1,10 @@
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class MainClient {
 
-    public static void main ( String[] args ) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public static void main ( String[] args ) throws Exception {
         String userName, encryptionUser, hashUser;
         int keyUserSize;
         if(args.length == 0) {
