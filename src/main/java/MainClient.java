@@ -7,36 +7,27 @@ public class MainClient {
     public static void main ( String[] args ) throws Exception {
         String userName, encryptionUser, hashUser, keyExchangeUser;
         int keyUserSize;
-        if(args.length == 0) {
-            //Insert username
-            userName = usernameChoice();
 
-            //Insert encryption choice
-            encryptionUser = encryptionChoice();
+        //Insert username
+        userName = usernameChoice();
 
-            //Insert key size
-            keyUserSize = keySizeChoice(encryptionUser);
+        //Insert encryption choice
+        encryptionUser = encryptionChoice();
 
-            //Insert hash mode
-            hashUser = hashChoice();
+        //Insert key size
+        keyUserSize = keySizeChoice(encryptionUser);
 
-            //Insert key exchange mode
-            if(encryptionUser.equals("RSA"))
-            {
-                System.out.println("Not possible to choose key exchange modes since they are only used in symmetric encryption (RSA is not). Finalizing...");
-                keyExchangeUser = "none";
-            }
-            else {
-                keyExchangeUser = keyExchangeChoice();
-            }
-        }
-        else
+        //Insert hash mode
+        hashUser = hashChoice();
+
+        //Insert key exchange mode
+        if(encryptionUser.equals("RSA"))
         {
-            userName = args[0];
-            encryptionUser = args[1];
-            keyUserSize = Integer.parseInt(args[2]);
-            hashUser = args[3];
-            keyExchangeUser = args[4];
+            System.out.println("Not possible to choose key exchange modes since they are only used in symmetric encryption (RSA is not). Finalizing...");
+            keyExchangeUser = "none";
+        }
+        else {
+            keyExchangeUser = keyExchangeChoice();
         }
 
         System.out.println("Connecting to server...");

@@ -138,11 +138,35 @@ class MainClientTest {
                     () -> assertNotEquals("SHA512",hashOutput2)
             );
         }
+
+        @DisplayName ("Test key exchange choice")
+        @Test
+        public void testKeyExchangeChoice() {
+            String userInput = String.format("%s",
+                    System.lineSeparator());
+            detectInputOutput(userInput);
+
+            String keyExchangeOutput = MainClient.keyExchangeChoice(); // call the key exchange choice method
+
+
+            String userInput2 = String.format("DH%s",
+                    System.lineSeparator());
+            detectInputOutput(userInput2);
+
+            String keyExchangeOutput2 = MainClient.keyExchangeChoice();
+
+            // checkout output
+            assertAll(
+                    () -> assertEquals("DH",keyExchangeOutput2),
+                    () -> assertEquals("none",keyExchangeOutput),
+                    () -> assertNotEquals("ECDH",keyExchangeOutput2)
+            );
+        }
     }
 
-   /* @Nested
-    @DisplayName("MainClient Test")
-    class testMainClient
+    @Nested
+    @DisplayName("Client Test")
+    class ClientTests
     {
         private Server server;
         private Thread serverThread;
@@ -152,27 +176,22 @@ class MainClientTest {
             this.server = new Server(8000);
             serverThread = new Thread( server );
             serverThread.start();
-            try{
-                serverThread.join();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            MainServer.main(new String[0]);
         }
 
-        @DisplayName ("Test client choices")
+        @DisplayName ("Test client")
         @Test
-        public void testClientChoices() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, ClassNotFoundException {
+        public void testClient() throws Exception {
+            String userName1 = "user";
+            String encryptionUser1 = "DES";
+            int keyUserSize1 = 56;
+            String hashUser1 = "none";
+            String keyExchangeUser1 = "none";
+            Client client1 = new Client( "127.0.0.1" , 8000 , userName1, encryptionUser1, keyUserSize1, hashUser1, keyExchangeUser1 );
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(baos);
-            System.setOut(printStream);
-
-            String[] userInput = {"user", "DES", "56", "none"};
-            MainClient.main(userInput);
-
-            assertEquals("t", baos.toString());
+            //String userInput = "testmessage";
+            //detectInputOutput(userInput);
+            //client1.sendMessages();
         }
 
-    }*/
+    }
 }

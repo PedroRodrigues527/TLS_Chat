@@ -164,7 +164,14 @@ public class Client {
     public void sendMessages ( ) throws IOException {
         while ( client.isConnected( ) ) {
             Scanner usrInput = new Scanner( System.in );
-            String message = usrInput.nextLine( );
+            String message;
+            do {
+                message = usrInput.nextLine( );
+                if(message.equals(""))
+                {
+                    System.out.println("You can't send an empty message.");
+                }
+            } while(message.equals(""));
             byte[] messageByte = new byte[0];
             try {
                 boolean b = encryptionUser.equals("AES") || encryptionUser.equals("DES") || encryptionUser.equals("TripleDES");
