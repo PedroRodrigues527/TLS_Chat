@@ -21,7 +21,14 @@ public class MainClient {
             hashUser = hashChoice();
 
             //Insert key exchange mode
-            keyExchangeUser = keyExchangeChoice();
+            if(encryptionUser.equals("RSA"))
+            {
+                System.out.println("Not possible to choose key exchange modes since they are only used in symmetric encryption (RSA is not). Finalizing...");
+                keyExchangeUser = "none";
+            }
+            else {
+                keyExchangeUser = keyExchangeChoice();
+            }
         }
         else
         {
@@ -152,7 +159,7 @@ public class MainClient {
 
         System.out.println( "Choose type of key exchange (none[default], DH or ECDH): " );
         userchoice = usrInput.nextLine( );
-        if (!Arrays.asList( hashes ).contains( userchoice ) ) {
+        if (!Arrays.asList( hashes ).contains( userchoice )) {
             userchoice = "none";
         }
 
