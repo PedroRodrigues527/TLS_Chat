@@ -31,7 +31,7 @@ public class Client {
     private PrivateKey privateKey;
     private PublicKey publicServerKey;
 
-    public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser ) throws Exception {
+    public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser, String keyExchangeUser ) throws Exception {
         client = new Socket( host , port );
         this.userName = userName;
         this.encryptionUser = encryptionUser;

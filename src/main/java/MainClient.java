@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class MainClient {
 
     public static void main ( String[] args ) throws Exception {
-        String userName, encryptionUser, hashUser;
+        String userName, encryptionUser, hashUser, keyExchangeUser;
         int keyUserSize;
         if(args.length == 0) {
             //Insert username
@@ -19,6 +19,9 @@ public class MainClient {
 
             //Insert hash mode
             hashUser = hashChoice();
+
+            //Insert key exchange mode
+            keyExchangeUser = keyExchangeChoice();
         }
         else
         {
@@ -26,11 +29,12 @@ public class MainClient {
             encryptionUser = args[1];
             keyUserSize = Integer.parseInt(args[2]);
             hashUser = args[3];
+            keyExchangeUser = args[4];
         }
 
         System.out.println("Connecting to server...");
 
-        Client client = new Client( "127.0.0.1" , 8000 , userName, encryptionUser, keyUserSize, hashUser );
+        Client client = new Client( "127.0.0.1" , 8000 , userName, encryptionUser, keyUserSize, hashUser, keyExchangeUser );
         client.readMessages( );
         client.sendMessages( );
     }
@@ -130,6 +134,23 @@ public class MainClient {
         String[] hashes = { "SHA1", "SHA224", "SHA256" , "SHA384" , "SHA512" , "MD5" };
 
         System.out.println( "Choose type of hash (none[default], SHA1, SHA224, SHA256, SHA384, SHA512 or MD5): " );
+        userchoice = usrInput.nextLine( );
+        if (!Arrays.asList( hashes ).contains( userchoice ) ) {
+            userchoice = "none";
+        }
+
+        return userchoice;
+    }
+
+    public static String keyExchangeChoice()
+    {
+        Scanner usrInput = new Scanner( System.in );
+
+        //Insert choice
+        String userchoice;
+        String[] hashes = { "DH", "ECDH" };
+
+        System.out.println( "Choose type of key exchange (none[default], DH or ECDH): " );
         userchoice = usrInput.nextLine( );
         if (!Arrays.asList( hashes ).contains( userchoice ) ) {
             userchoice = "none";
