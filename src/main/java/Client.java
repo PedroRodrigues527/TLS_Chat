@@ -22,7 +22,7 @@ public class Client {
     private final Socket client;
     private final ObjectInputStream in;
     private final ObjectOutputStream out;
-    private final String userName, encryptionUser, hashUser;
+    private final String userName, encryptionUser, hashUser, keyExchangeUser;
     private final int keySizeUser;
 
     private String symmetricKey;
@@ -37,6 +37,7 @@ public class Client {
         this.encryptionUser = encryptionUser;
         this.keySizeUser = keySizeUser;
         this.hashUser = hashUser;
+        this.keyExchangeUser = keyExchangeUser;
 
         out = new ObjectOutputStream( client.getOutputStream( ) );
         in = new ObjectInputStream( client.getInputStream( ) );
@@ -55,11 +56,12 @@ public class Client {
     }
 
     public void helloHandShakeSend () throws IOException {
-        ArrayList<Object> cipherSuite = new ArrayList<>(4);
+        ArrayList<Object> cipherSuite = new ArrayList<>(5);
         cipherSuite.add( userName );
         cipherSuite.add( encryptionUser );
         cipherSuite.add( keySizeUser );
         cipherSuite.add( hashUser );
+        cipherSuite.add( keyExchangeUser );
         out.writeObject( cipherSuite );
     }
 

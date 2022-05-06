@@ -27,6 +27,8 @@ public class ClientHandler implements Runnable {
     private final int sizeKeyUser;
     private final String hashUser;
 
+    private final String keyExchangeUser;
+
     private String symmetricKey;
 
     private PrivateKey privateKey;
@@ -44,9 +46,29 @@ public class ClientHandler implements Runnable {
         this.encUser = (String) clientHello.get( 1 );
         this.sizeKeyUser = (int) clientHello.get( 2 );
         this.hashUser = (String) clientHello.get( 3 );
+        this.keyExchangeUser = (String) clientHello.get( 4 );
         System.out.println( "CLIENT_HELLO" );
 
         boolean b = encUser.equals("AES") || encUser.equals("DES") || encUser.equals("TripleDES");
+        helloHandShakeSend(b);
+
+
+        //OK handshake
+        String hashAlgo = "Hmac" + hashUser;
+        ArrayList<Object> messagePlusHash = OkHandShakeReceived(b);
+        byte[] decryptedMessageReceivedOK = (byte[]) messagePlusHash.get(0);
+        byte[] hmacHash = (byte[]) messagePlusHash.get(1);
+
+        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
+        OkHandShakeSend(b, hashAlgo, messageDecryptS, hmacHash, decryptedMessageReceivedOK);
+
+        //Announcement message
+        clientHandlers.add( this );
+        String announcement = (String) in.readObject( );
+        broadcastMessage( announcement.getBytes( ), true);
+    }
+
+    public void helloHandShakeSend (boolean b) throws IOException, NoSuchAlgorithmException {
         if(b)
         {
             SymmetricAlgorithm sa = new SymmetricAlgorithm();
@@ -61,12 +83,11 @@ public class ClientHandler implements Runnable {
             this.publicKey = ( PublicKey ) keyList.get( 1 );
             out.writeObject( publicKey );
         }
+    }
 
-
-        //OK handshake
+    public ArrayList<Object> OkHandShakeReceived(boolean b) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException, ClassNotFoundException {
         byte[] decryptedMessageReceivedOK = new byte[0];
         byte[] hmacHash = new byte[0];
-        String hashAlgo = "Hmac" + hashUser;
         if(b) {
             if( hashUser.equals("none")) {
                 byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
@@ -92,7 +113,13 @@ public class ClientHandler implements Runnable {
             decryptedMessageReceivedOK = RSA.decrypt( encryptedMessageUser , privateKey );
         }
 
-        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
+        ArrayList<Object> result = new ArrayList<>(2);
+        result.add(decryptedMessageReceivedOK);
+        result.add(hmacHash);
+        return result;
+    }
+
+    public void OkHandShakeSend(boolean b, String hashAlgo, String messageDecryptS, byte[] hmacHash, byte[] decryptedMessageReceivedOK) throws Exception {
         if( messageDecryptS.equals( userName ) )
         {
             if( hashUser.equals("none")) {
@@ -150,11 +177,6 @@ public class ClientHandler implements Runnable {
             System.out.println("ERROR: TLS VALIDATION FAILED.");
             throw new Exception("Received fatal alert: CLIENT_OK_FAILURE");
         }
-
-        //Announcement message
-        clientHandlers.add( this );
-        String announcement = (String) in.readObject( );
-        broadcastMessage( announcement.getBytes( StandardCharsets.UTF_8 ), true);
     }
 
     @Override
