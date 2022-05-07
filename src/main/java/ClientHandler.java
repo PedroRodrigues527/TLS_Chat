@@ -108,7 +108,7 @@ public class ClientHandler implements Runnable {
                     secretKeyDHByte = ByteBuffer.allocate(8).put(secretKeyDH.toByteArray()).array();
                 }
                 SecretKeySpec secretKey = new SecretKeySpec( secretKeyDHByte , encUser );
-
+                //https://stackoverflow.com/questions/26828649/diffiehellman-key-exchange-to-aes-or-desede-in-java
                 this.symmetricKey = Base64.getEncoder().encodeToString(secretKey.getEncoded( ) );
             }
             else if(keyExchangeUser.equals("ECDH"))
