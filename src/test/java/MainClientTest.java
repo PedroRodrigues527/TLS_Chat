@@ -260,10 +260,8 @@ class MainClientTest {
     {
         @DisplayName ("Test HMac")
         @Test
-        public void givenDataAndKeyAndAlgorithm_whenHmacWithJava_thenSuccess()
-                throws NoSuchAlgorithmException, InvalidKeyException {
-
-            String hmacSHA256Value = "[P�\f}Ǯ���C<����*�9zU\\ouˊa��Z\f5";
+        public void testHMac()
+                throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException {
             String hmacSHA256Algorithm = "HmacSHA256";
             String data = "baeldung";
             String key = "123456";
@@ -271,7 +269,17 @@ class MainClientTest {
             byte[] result = HMac.hmacWithJava(hmacSHA256Algorithm, data, key);
             String resultString = new String(result);
 
-            assertEquals(hmacSHA256Value, resultString);
+            SymmetricAlgorithm sa = new SymmetricAlgorithm();
+            String algorithm = "AES";
+            String secretKey = sa.generateKey(128, algorithm);
+            byte[] encryptedMessage = SymmetricAlgorithm.encrypt(data.getBytes(), secretKey, algorithm);
+            byte[] decryptedMessage = SymmetricAlgorithm.decrypt(encryptedMessage, secretKey, algorithm);
+            String messageOutput = new String(decryptedMessage);
+
+            byte[] result2 = HMac.hmacWithJava(hmacSHA256Algorithm, messageOutput, key);
+            String resultString2 = new String(result2);
+
+            assertEquals(resultString2, resultString);
         }
     }
 
