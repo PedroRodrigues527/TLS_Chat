@@ -121,6 +121,7 @@ public class ClientHandler implements Runnable {
                 out.writeObject(publicKeyECDH);
                 PublicKey publicClientKeyECDH = (PublicKey) in.readObject();
 
+                //https://stackoverflow.com/questions/26828649/diffiehellman-key-exchange-to-aes-or-desede-in-java
                 byte[] secretKeyECDH = ecdh.getSecretKey(privateKeyECDH, publicClientKeyECDH);
                 MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
                 byte[] bkey;
