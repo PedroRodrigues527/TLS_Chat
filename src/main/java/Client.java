@@ -1,12 +1,15 @@
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import java.math.BigInteger;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -66,8 +69,41 @@ public class Client {
     }
 
     public void helloHandShakeReceived () throws IOException, ClassNotFoundException {
-        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" )|| encryptionUser.equals( "TripleDES" ) ) {
-            symmetricKey = (String) in.readObject( );
+        if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
+            if(keyExchangeUser.equals("none")) {
+                symmetricKey = (String) in.readObject( );
+            }
+            else if(keyExchangeUser.equals("DH")) {
+                //get and generate values
+                ArrayList<Object> DHvalues = (ArrayList<Object>) in.readObject();
+                int N = (int) DHvalues.get(0);
+                int G = (int) DHvalues.get(1);
+                BigInteger publicServerKeyDH = (BigInteger) DHvalues.get(2);
+
+                BigInteger privateKeyDH = BigInteger.valueOf(G-2);
+                BigInteger publicKeyDH = DiffieHellman.generatePublicKey(BigInteger.valueOf(G), BigInteger.valueOf(N), privateKeyDH);
+                out.writeObject(publicKeyDH);
+
+                BigInteger secretKeyDH = DiffieHellman.generateSecretKey(BigInteger.valueOf(N), publicServerKeyDH, privateKeyDH);
+                byte[] secretKeyDHByte;
+                if( encryptionUser.equals( "AES" ) ) {
+                    secretKeyDHByte = ByteBuffer.allocate((keySizeUser / Byte.SIZE)).put(secretKeyDH.toByteArray()).array();
+                }
+                else if ( encryptionUser.equals( "TripleDES" ) )
+                {
+                    secretKeyDHByte = ByteBuffer.allocate(8*3).put(secretKeyDH.toByteArray()).array();
+                }
+                else {
+                    secretKeyDHByte = ByteBuffer.allocate(8).put(secretKeyDH.toByteArray()).array();
+                }
+                SecretKeySpec secretKey = new SecretKeySpec( secretKeyDHByte , encryptionUser );
+
+                this.symmetricKey = Base64.getEncoder().encodeToString(secretKey.getEncoded( ) );
+            }
+            else if(keyExchangeUser.equals("ECDH"))
+            {
+
+            }
         }
         else if ( encryptionUser.equals( "RSA" ) ) {
             publicServerKey = ( PublicKey ) in.readObject( );

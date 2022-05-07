@@ -2,6 +2,7 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +14,22 @@ public class SymmetricAlgorithm {
 
     private static final int ENCRYPT_MODE = 1;
     private static final int DECRYPT_MODE = 2;
+
+    public static byte[] encryptDH ( byte[] text , byte[] key, String algorithm, String cipheralgorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        byte[] bytes = ByteBuffer.allocate( 16 ).put( key ).array( );
+        SecretKeySpec secretKey = new SecretKeySpec( bytes , algorithm );
+        Cipher cipher = Cipher.getInstance( cipheralgorithm );
+        cipher.init( Cipher.ENCRYPT_MODE , secretKey );
+        return cipher.doFinal( text );
+    }
+
+    public static byte[] decryptDH ( byte[] text , byte[] key, String algorithm, String cipheralgorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        byte[] bytes = ByteBuffer.allocate( 16 ).put( key ).array( );
+        SecretKeySpec secretKey = new SecretKeySpec( bytes , algorithm );
+        Cipher cipher = Cipher.getInstance( cipheralgorithm );
+        cipher.init( Cipher.DECRYPT_MODE , secretKey );
+        return cipher.doFinal( text );
+    }
 
     public static byte[] encrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( algorithm );
