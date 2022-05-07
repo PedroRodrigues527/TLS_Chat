@@ -301,21 +301,25 @@ public class ClientHandler implements Runnable {
                     messageWithUserName.add(messageEncrypted);
 
                     addUserNameToMessage( messageWithUserName , message , client );
+                    checkAndSendToUsersSpecified( message , client , messageWithUserName );
 
-                    String message_verify = new String( message );
-                    String[] separated_message = message_verify.split(" ", 2 );
-                    String[] users = separated_message[0].split(",@", countChar( separated_message[1], "@" ) );
-                    users[0] = users[0].substring(1 );
-
-                    if ( Arrays.asList( users ).contains( client.userName ) ) {
-                        client.out.writeObject( messageWithUserName );
-                        client.out.flush();
-                    }
                 } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
                          BadPaddingException | InvalidKeyException e) {
                     removeClient(client);
                 }
             }
+        }
+    }
+
+    public void checkAndSendToUsersSpecified (byte[] message , ClientHandler Client , ArrayList messageWithUsername) throws IOException {
+        String message_verify = new String( message );
+        String[] separated_message = message_verify.split(" ", 2 );
+        String[] users = separated_message[0].split(",@", countChar( separated_message[1], "@" ) );
+        users[0] = users[0].substring(1 );
+
+        if ( Arrays.asList( users ).contains( Client.userName ) ) {
+            Client.out.writeObject( messageWithUsername );
+            Client.out.flush();
         }
     }
 
