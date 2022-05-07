@@ -87,7 +87,6 @@ public class ClientHandler implements Runnable {
                     G = DHNumberGenerator.generateG(N);
                 } while(!DHNumberGenerator.isPrime(N) || G <= 3);
 
-                //BigInteger privateKeyDH = DiffieHellman.generatePrivateKey();
                 BigInteger privateKeyDH = BigInteger.valueOf(G-1);
                 BigInteger publicKeyDH = DiffieHellman.generatePublicKey(BigInteger.valueOf(G), BigInteger.valueOf(N), privateKeyDH);
 
