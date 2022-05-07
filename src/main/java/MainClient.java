@@ -4,6 +4,14 @@ import java.util.Scanner;
 
 public class MainClient {
 
+    /**
+     * Main method, to retrieve user choices:
+     *      Username, Encryption algorithm, key size, hash algorithm.
+     * And initializes the Client.
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main ( String[] args ) throws Exception {
         String userName, encryptionUser, hashUser, keyExchangeUser;
         int keyUserSize;
@@ -37,6 +45,10 @@ public class MainClient {
         client.sendMessages( );
     }
 
+    /**
+     * Retrieve username written by the user
+     * @return username chosen
+     */
     public static String usernameChoice()
     {
         Scanner usrInput = new Scanner( System.in );
@@ -54,6 +66,10 @@ public class MainClient {
         return userchoice;
     }
 
+    /**
+     * Retrieve username written by the user
+     * @return Encryption algorithm chosen
+     */
     public static String encryptionChoice()
     {
         Scanner usrInput = new Scanner( System.in );
@@ -72,6 +88,11 @@ public class MainClient {
         return userchoice;
     }
 
+    /**
+     * Select the size of the key, taking into account the algorithm chosen.
+     * @param encryption_choice encryption algorithm chosen
+     * @return size of the key selected
+     */
     public static int keySizeChoice( String encryption_choice )
     {
         Scanner usrInput = new Scanner( System.in );
@@ -123,6 +144,10 @@ public class MainClient {
         return key_size_choice;
     }
 
+    /**
+     * Allows the user to chose the hashs algorithm.
+     * @return hash chosen.
+     */
     public static String hashChoice()
     {
         Scanner usrInput = new Scanner( System.in );
@@ -140,6 +165,10 @@ public class MainClient {
         return userchoice;
     }
 
+    /**
+     * Allows user to chose the key exchange algorithm
+     * @return key exchange selected
+     */
     public static String keyExchangeChoice()
     {
         Scanner usrInput = new Scanner( System.in );
