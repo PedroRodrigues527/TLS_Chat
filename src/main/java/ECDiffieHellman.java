@@ -5,7 +5,7 @@ import java.security.*;
 public class ECDiffieHellman {
 
     public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        // Generate ephemeral ECDH keypair
+        // Generate ECDH keypair
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
         kpg.initialize(256);
         return kpg.generateKeyPair();

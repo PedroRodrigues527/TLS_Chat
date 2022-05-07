@@ -3,14 +3,20 @@ import org.junit.jupiter.api.*;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -165,6 +171,92 @@ class MainClientTest {
     }
 
     @Nested
+    @DisplayName("DHNumberGenerator Tests")
+    class DHNumberGeneratorTests
+    {
+        @DisplayName ("Test DHNumbers")
+        @Test
+        public void testDHNumber() {
+            int primeNumber, primitiveRoot;
+            do {
+                primeNumber = DHNumberGenerator.generateP();
+                primitiveRoot = DHNumberGenerator.generateG(primeNumber);
+            } while(primitiveRoot == -1);
+
+            int G2 = DHNumberGenerator.generateG(4);
+            int G3 = DHNumberGenerator.generateG(2);
+            int G4 = DHNumberGenerator.generateG(277);
+            int finalPrimeNumber = primeNumber;
+            int finalPrimitiveRoot = primitiveRoot;
+
+            assertAll(
+                    () -> assertTrue(DHNumberGenerator.isPrime(finalPrimeNumber)),
+                    () -> assertFalse(DHNumberGenerator.isPrime(4)),
+                    () -> assertFalse(DHNumberGenerator.isPrime(50)),
+                    () -> assertFalse(DHNumberGenerator.isPrime(1000)),
+                    () -> assertFalse(DHNumberGenerator.isPrime(1)),
+                    () -> assertFalse(DHNumberGenerator.isPrime(25)),
+                    () -> assertNotEquals(-1, finalPrimitiveRoot),
+                    () -> assertEquals(-1, G2),
+                    () -> assertEquals(-1, G3),
+                    () -> assertNotEquals(-1, G4)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("DiffieHellman Tests")
+    class DiffieHellmanTests
+    {
+        @DisplayName ("Test DiffieHellman")
+        @Test
+        public void testDH() {
+
+            int P = 13, G = 6;
+            int PRa = 5, PRb = 4;
+            BigInteger PUa = DiffieHellman.generatePublicKey(BigInteger.valueOf(G), BigInteger.valueOf(P), BigInteger.valueOf(PRa));
+            BigInteger PUb = DiffieHellman.generatePublicKey(BigInteger.valueOf(G), BigInteger.valueOf(P), BigInteger.valueOf(PRb));
+
+            BigInteger SKa = DiffieHellman.generateSecretKey(BigInteger.valueOf(P), PUb, BigInteger.valueOf(PRa));
+            BigInteger SKb = DiffieHellman.generateSecretKey(BigInteger.valueOf(P), PUa, BigInteger.valueOf(PRb));
+
+            assertAll(
+                    () -> assertEquals(SKa, SKb)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("ECDiffieHellman Tests")
+    class ECDiffieHellmanTests
+    {
+        @DisplayName ("Test ECDiffieHellman")
+        @Test
+        public void testECDH() throws NoSuchAlgorithmException, InvalidKeyException {
+            ECDiffieHellman ecdh = new ECDiffieHellman();
+            KeyPair keyPair1 = ecdh.generateKeyPair();
+            KeyPair keyPair2 = ecdh.generateKeyPair();
+
+            byte[] secretKey1 = ecdh.getSecretKey(ecdh.getPrivateKey(keyPair1), ecdh.getPublicKey(keyPair2));
+            byte[] secretKey2 = ecdh.getSecretKey(ecdh.getPrivateKey(keyPair2), ecdh.getPublicKey(keyPair1));
+
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            byte[] bkey1 = Arrays.copyOf(
+                    sha256.digest(secretKey1), 16);
+            byte[] bkey2 = Arrays.copyOf(
+                    sha256.digest(secretKey2), 16);
+            SecretKey desSpec1 = new SecretKeySpec(bkey1, "AES");
+            SecretKey desSpec2 = new SecretKeySpec(bkey2, "AES");
+            String key1String = Base64.getEncoder().encodeToString(desSpec1.getEncoded());
+            String key2String = Base64.getEncoder().encodeToString(desSpec2.getEncoded());
+
+            assertAll(
+                    () -> assertEquals(key1String, key2String)
+            );
+        }
+    }
+
+    /*@Nested
     @DisplayName("Client Test")
     class ClientTests
     {
@@ -188,10 +280,15 @@ class MainClientTest {
             String keyExchangeUser1 = "none";
             Client client1 = new Client( "127.0.0.1" , 8000 , userName1, encryptionUser1, keyUserSize1, hashUser1, keyExchangeUser1 );
 
-            //String userInput = "testmessage";
-            //detectInputOutput(userInput);
-            //client1.sendMessages();
+            // checkout values
+            assertAll(
+                    () -> assertEquals(userName1,client1.getUserName()),
+                    () -> assertEquals(encryptionUser1,client1.getEncryptionUser()),
+                    () -> assertEquals(keyUserSize1,client1.getKeySizeUser()),
+                    () -> assertEquals(hashUser1,client1.getHashUser()),
+                    () -> assertEquals(keyExchangeUser1,client1.getKeyExchangeUser())
+            );
         }
 
-    }
+    }*/
 }

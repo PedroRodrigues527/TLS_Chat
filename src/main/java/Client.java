@@ -392,4 +392,85 @@ public class Client {
         in.close( );
     }
 
+    /**
+     * Gets userName
+     *
+     * @return value of userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Gets encryptionUser
+     *
+     * @return value of encryptionUser
+     */
+    public String getEncryptionUser() {
+        return encryptionUser;
+    }
+
+    /**
+     * Gets hashUser
+     *
+     * @return value of hashUser
+     */
+    public String getHashUser() {
+        return hashUser;
+    }
+
+    /**
+     * Gets keyExchangeUser
+     *
+     * @return value of keyExchangeUser
+     */
+    public String getKeyExchangeUser() {
+        return keyExchangeUser;
+    }
+
+    /**
+     * Gets keySizeUser
+     *
+     * @return value of keySizeUser
+     */
+    public int getKeySizeUser() {
+        return keySizeUser;
+    }
+
+    /**
+     * Gets symmetricKey
+     *
+     * @return value of symmetricKey
+     */
+    public String getSymmetricKey() {
+        return symmetricKey;
+    }
+
+    /**
+     * Gets publicKey
+     *
+     * @return value of publicKey
+     */
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    /**
+     * Gets privateKey
+     *
+     * @return value of privateKey
+     */
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    /**
+     * Gets publicServerKey
+     *
+     * @return value of publicServerKey
+     */
+    public PublicKey getPublicServerKey() {
+        return publicServerKey;
+    }
+
 }
