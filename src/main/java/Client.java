@@ -1,6 +1,7 @@
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import java.io.IOException;
@@ -11,10 +12,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -68,7 +66,7 @@ public class Client {
         out.writeObject( cipherSuite );
     }
 
-    public void helloHandShakeReceived () throws IOException, ClassNotFoundException {
+    public void helloHandShakeReceived () throws IOException, ClassNotFoundException, NoSuchAlgorithmException, InvalidKeyException {
         if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
             if(keyExchangeUser.equals("none")) {
                 symmetricKey = (String) in.readObject( );
@@ -102,7 +100,33 @@ public class Client {
             }
             else if(keyExchangeUser.equals("ECDH"))
             {
+                ECDiffieHellman ecdh = new ECDiffieHellman();
+                KeyPair keyPair = ecdh.generateKeyPair();
+                PublicKey publicKeyECDH = ecdh.getPublicKey(keyPair);
+                PrivateKey privateKeyECDH = ecdh.getPrivateKey(keyPair);
 
+                PublicKey publicServerKeyECDH = (PublicKey) in.readObject();
+                out.writeObject(publicKeyECDH);
+
+                byte[] secretKeyECDH = ecdh.getSecretKey(privateKeyECDH, publicServerKeyECDH);
+                MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+                byte[] bkey;
+                if( encryptionUser.equals( "AES" ) ) {
+                    bkey = Arrays.copyOf(
+                            sha256.digest(secretKeyECDH), keySizeUser / Byte.SIZE);
+                }
+                else if ( encryptionUser.equals( "TripleDES" ) )
+                {
+                    bkey = Arrays.copyOf(
+                            sha256.digest(secretKeyECDH), 8*3);
+                }
+                else {
+                    bkey = Arrays.copyOf(
+                            sha256.digest(secretKeyECDH), 8);
+                }
+                SecretKey desSpec = new SecretKeySpec(bkey, encryptionUser);
+
+                this.symmetricKey = Base64.getEncoder().encodeToString(desSpec.getEncoded());
             }
         }
         else if ( encryptionUser.equals( "RSA" ) ) {
