@@ -49,29 +49,29 @@ public class ClientHandler implements Runnable {
         this.keyExchangeUser = (String) clientHello.get( 4 );
         System.out.println( "CLIENT_HELLO" );
 
-        boolean b = encUser.equals("AES") || encUser.equals("DES") || encUser.equals("TripleDES");
-        helloHandShakeSend(b);
+        boolean isSymetricAlgorithm = encUser.equals("AES") || encUser.equals("DES") || encUser.equals("TripleDES");
+        helloHandShakeSend( isSymetricAlgorithm );
 
 
         //OK handshake
         String hashAlgo = "Hmac" + hashUser;
-        ArrayList<Object> messagePlusHash = OkHandShakeReceived(b);
-        byte[] decryptedMessageReceivedOK = (byte[]) messagePlusHash.get(0);
-        byte[] hmacHash = (byte[]) messagePlusHash.get(1);
+        ArrayList<Object> messagePlusHash = OkHandShakeReceived( isSymetricAlgorithm );
+        byte[] decryptedMessageReceivedOK = (byte[]) messagePlusHash.get( 0 );
+        byte[] hmacHash = (byte[]) messagePlusHash.get( 1 );
 
-        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
-        OkHandShakeSend(b, hashAlgo, messageDecryptS, hmacHash, decryptedMessageReceivedOK);
+        String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8 );
+        OkHandShakeSend( isSymetricAlgorithm , hashAlgo , messageDecryptS , hmacHash , decryptedMessageReceivedOK );
 
         //Announcement message
         clientHandlers.add( this );
         String announcement = (String) in.readObject( );
-        broadcastMessage( announcement.getBytes( ), true);
+        broadcastMessage( announcement.getBytes( ), true );
     }
 
-    public void helloHandShakeSend (boolean b) throws IOException, NoSuchAlgorithmException {
-        if(b)
+    public void helloHandShakeSend ( boolean isSymetric ) throws IOException, NoSuchAlgorithmException {
+        if( isSymetric )
         {
-            SymmetricAlgorithm sa = new SymmetricAlgorithm();
+            SymmetricAlgorithm sa = new SymmetricAlgorithm( );
             this.symmetricKey = sa.generateKey( sizeKeyUser, encUser );
             out.writeObject( symmetricKey );
         }
@@ -85,23 +85,23 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public ArrayList<Object> OkHandShakeReceived(boolean b) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException, ClassNotFoundException {
+    public ArrayList<Object> OkHandShakeReceived(boolean isSymetric) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException, ClassNotFoundException {
         byte[] decryptedMessageReceivedOK = new byte[0];
         byte[] hmacHash = new byte[0];
-        if(b) {
-            if( hashUser.equals("none")) {
-                byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
-                decryptedMessageReceivedOK = SymmetricAlgorithm.decrypt(encryptedMessageReceivedOK, symmetricKey, encUser);
+        if( isSymetric ) {
+            if( hashUser.equals( "none" ) ) {
+                byte[] encryptedMessageReceivedOK = (byte[]) in.readObject( );
+                decryptedMessageReceivedOK = SymmetricAlgorithm.decrypt( encryptedMessageReceivedOK , symmetricKey , encUser );
             }
             else
             {
-                ArrayList<Object> encryptedMessagePlusHash = (ArrayList<Object>) in.readObject();
-                byte[] encryptedMessageReceivedOK = (byte[]) encryptedMessagePlusHash.get(0);
-                hmacHash = (byte[]) encryptedMessagePlusHash.get(1);
-                decryptedMessageReceivedOK = SymmetricAlgorithm.decrypt(encryptedMessageReceivedOK, symmetricKey, encUser);
+                ArrayList<Object> encryptedMessagePlusHash = (ArrayList<Object>) in.readObject( );
+                byte[] encryptedMessageReceivedOK = (byte[]) encryptedMessagePlusHash.get( 0 );
+                hmacHash = (byte[]) encryptedMessagePlusHash.get( 1 );
+                decryptedMessageReceivedOK = SymmetricAlgorithm.decrypt( encryptedMessageReceivedOK , symmetricKey , encUser );
             }
         }
-        else if(encUser.equals("RSA"))
+        else if( encUser.equals( "RSA" ) )
         {
             ArrayList<Object> encryptedPlusPublicKey = (ArrayList<Object>) in.readObject();
             byte[] encryptedMessageUser = (byte[]) encryptedPlusPublicKey.get( 0 );
@@ -119,52 +119,52 @@ public class ClientHandler implements Runnable {
         return result;
     }
 
-    public void OkHandShakeSend(boolean b, String hashAlgo, String messageDecryptS, byte[] hmacHash, byte[] decryptedMessageReceivedOK) throws Exception {
+    public void OkHandShakeSend(boolean isSymetric , String hashAlgo , String messageDecryptS , byte[] hmacHash , byte[] decryptedMessageReceivedOK ) throws Exception {
         if( messageDecryptS.equals( userName ) )
         {
-            if( hashUser.equals("none")) {
-                System.out.println("CLIENT_OK");
-                if (b) {
-                    byte[] encryptedMessageSend = SymmetricAlgorithm.encrypt(decryptedMessageReceivedOK, symmetricKey, encUser);
+            if( hashUser.equals( "none" ) ) {
+                System.out.println( "CLIENT_OK" );
+                if ( isSymetric ) {
+                    byte[] encryptedMessageSend = SymmetricAlgorithm.encrypt( decryptedMessageReceivedOK , symmetricKey , encUser );
                     out.writeObject(encryptedMessageSend);
-                } else if (encUser.equals("RSA")) {
-                    byte[] encryptedMessageSend = RSA.encrypt(decryptedMessageReceivedOK, publicClientKey);
-                    out.writeObject(encryptedMessageSend);
+                } else if ( encUser.equals( "RSA" ) ) {
+                    byte[] encryptedMessageSend = RSA.encrypt( decryptedMessageReceivedOK , publicClientKey );
+                    out.writeObject( encryptedMessageSend );
                 }
             }
             else
             {
-                if (encUser.equals("RSA")) {
-                    byte[] hmacHashResult = HMac.hmacWithJava(hashAlgo, messageDecryptS, Base64.getEncoder().encodeToString(publicClientKey.getEncoded()));
-                    if (Arrays.equals(hmacHashResult, hmacHash))
+                if ( encUser.equals( "RSA" ) ) {
+                    byte[] hmacHashResult = HMac.hmacWithJava( hashAlgo, messageDecryptS, Base64.getEncoder().encodeToString( publicClientKey.getEncoded( ) ) );
+                    if ( Arrays.equals( hmacHashResult , hmacHash ) )
                     {
-                        System.out.println("CLIENT_OK");
+                        System.out.println( "CLIENT_OK" );
                     }
                     else
                     {
-                        System.out.println("ERROR: TLS VALIDATION FAILED.");
-                        throw new Exception("Received fatal alert: CLIENT_OK_FAILURE");
+                        System.out.println( "ERROR: TLS VALIDATION FAILED." );
+                        throw new Exception( "Received fatal alert: CLIENT_OK_FAILURE" );
                     }
 
-                    byte[] encryptedMessageSend = RSA.encrypt(decryptedMessageReceivedOK, publicClientKey);
+                    byte[] encryptedMessageSend = RSA.encrypt( decryptedMessageReceivedOK , publicClientKey );
                     ArrayList<Object> encryptedNamePlusHash = new ArrayList<>(2);
                     encryptedNamePlusHash.add( encryptedMessageSend );
-                    encryptedNamePlusHash.add( HMac.hmacWithJava(hashAlgo, userName, Base64.getEncoder().encodeToString(publicKey.getEncoded())));
+                    encryptedNamePlusHash.add( HMac.hmacWithJava(hashAlgo , userName , Base64.getEncoder().encodeToString( publicKey.getEncoded( ) ) ) );
                     out.writeObject( encryptedNamePlusHash );
                 }
-                else if (b) {
-                    byte[] hmacHashResult = HMac.hmacWithJava(hashAlgo, messageDecryptS, Base64.getEncoder().encodeToString(symmetricKey.getBytes()));
-                    if (Arrays.equals(hmacHashResult, hmacHash))
+                else if ( isSymetric ) {
+                    byte[] hmacHashResult = HMac.hmacWithJava( hashAlgo, messageDecryptS, Base64.getEncoder().encodeToString( symmetricKey.getBytes( ) ) );
+                    if ( Arrays.equals( hmacHashResult , hmacHash ) )
                     {
-                        System.out.println("CLIENT_OK");
+                        System.out.println( "CLIENT_OK" );
                     }
                     else
                     {
-                        System.out.println("ERROR: TLS VALIDATION FAILED.");
-                        throw new Exception("Received fatal alert: CLIENT_OK_FAILURE");
+                        System.out.println( "ERROR: TLS VALIDATION FAILED." );
+                        throw new Exception( "Received fatal alert: CLIENT_OK_FAILURE" );
                     }
 
-                    byte[] encryptedMessageSend = SymmetricAlgorithm.encrypt(decryptedMessageReceivedOK, symmetricKey, encUser);
+                    byte[] encryptedMessageSend = SymmetricAlgorithm.encrypt( decryptedMessageReceivedOK , symmetricKey , encUser );
                     ArrayList<Object> encryptedNamePlusHash = new ArrayList<>(2);
                     encryptedNamePlusHash.add( encryptedMessageSend );
                     encryptedNamePlusHash.add( HMac.hmacWithJava(hashAlgo, userName, Base64.getEncoder().encodeToString(symmetricKey.getBytes())));
@@ -174,8 +174,8 @@ public class ClientHandler implements Runnable {
         }
         else
         {
-            System.out.println("ERROR: TLS VALIDATION FAILED.");
-            throw new Exception("Received fatal alert: CLIENT_OK_FAILURE");
+            System.out.println( "ERROR: TLS VALIDATION FAILED." );
+            throw new Exception( "Received fatal alert: CLIENT_OK_FAILURE" );
         }
     }
 
@@ -185,37 +185,37 @@ public class ClientHandler implements Runnable {
             try {
                 byte[] message;
                 byte[] hashReceived = new byte[0];
-                if(hashUser.equals("none")) {
-                    message = (byte[]) in.readObject();
+                if( hashUser.equals( "none" ) ) {
+                    message = (byte[]) in.readObject( );
                 }
                 else
                 {
                     ArrayList<Object> encryptedNamePlusHash = (ArrayList<Object>) in.readObject( );
-                    message = (byte[]) encryptedNamePlusHash.get(0);
-                    hashReceived = (byte[]) encryptedNamePlusHash.get(1);
+                    message = (byte[]) encryptedNamePlusHash.get( 0 );
+                    hashReceived = (byte[]) encryptedNamePlusHash.get( 1 );
                 }
-                boolean b = encUser.equals("AES") || encUser.equals("DES") || encUser.equals("TripleDES");
-                if(b)
+                boolean isSymetricAlgorithm = encUser.equals( "AES" ) || encUser.equals( "DES" ) || encUser.equals( "TripleDES" );
+                if( isSymetricAlgorithm )
                 {
-                    message = SymmetricAlgorithm.decrypt( message , this.symmetricKey, encUser );
+                    message = SymmetricAlgorithm.decrypt( message , this.symmetricKey , encUser );
                 }
                 else if( encUser.equals( "RSA" ) )
                 {
                     message = RSA.decrypt( message , privateKey );
                 }
                 String messageDecrypted = new String( message , StandardCharsets.UTF_8 );
-                if(!hashUser.equals("none")) {
+                if( ! hashUser.equals( "none" ) ) {
                     byte[] hashResult = new byte[0];
-                    if(b)
+                    if( isSymetricAlgorithm )
                     {
-                        hashResult = HMac.hmacWithJava("Hmac" + hashUser, messageDecrypted, Base64.getEncoder().encodeToString(symmetricKey.getBytes()));
+                        hashResult = HMac.hmacWithJava("Hmac" + hashUser , messageDecrypted , Base64.getEncoder().encodeToString( symmetricKey.getBytes( ) ) );
                     }
                     else if( encUser.equals( "RSA" ) )
                     {
-                        hashResult = HMac.hmacWithJava("Hmac" + hashUser, messageDecrypted, Base64.getEncoder().encodeToString(publicKey.getEncoded()));
+                        hashResult = HMac.hmacWithJava("Hmac" + hashUser , messageDecrypted , Base64.getEncoder().encodeToString( publicKey.getEncoded( ) ) );
                     }
 
-                    if (Arrays.equals(hashReceived, hashResult)) {
+                    if ( Arrays.equals( hashReceived , hashResult ) ) {
                         if( messageDecrypted.charAt(0) != '@' )
                             broadcastMessage( messageDecrypted.getBytes( StandardCharsets.UTF_8) , false );
                         else
@@ -223,13 +223,13 @@ public class ClientHandler implements Runnable {
                     }
                     else
                     {
-                        System.out.println("-- INVALID MESSAGE RECEIVED --");
+                        System.out.println( "-- INVALID MESSAGE RECEIVED --" );
                     }
                 }
                 else
                 {
                     if( messageDecrypted.charAt(0) != '@' )
-                        broadcastMessage( messageDecrypted.getBytes( StandardCharsets.UTF_8) , false );
+                        broadcastMessage( messageDecrypted.getBytes( StandardCharsets.UTF_8 ) , false );
                     else
                         specificMessage( messageDecrypted.getBytes( StandardCharsets.UTF_8 ) );
                 }
