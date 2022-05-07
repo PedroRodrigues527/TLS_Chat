@@ -36,6 +36,12 @@ public class ClientHandler implements Runnable {
     private PublicKey publicKey;
     private PublicKey publicClientKey;
 
+    /**
+     * Constructor that receives user information from socket and does
+     * handshake protocol ( similar to TLS )
+     * @param server server socket
+     * @throws Exception
+     */
     public ClientHandler ( Socket server ) throws Exception {
         this.server = server;
         this.in = new ObjectInputStream( server.getInputStream( ) );
@@ -69,6 +75,15 @@ public class ClientHandler implements Runnable {
         broadcastMessage( announcement.getBytes( ), true );
     }
 
+    /**
+     * Parte of 'TLS' agreement between client and server.
+     *
+     * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws ClassNotFoundException
+     * @throws InvalidKeyException
+     */
     public void helloHandShakeSend ( boolean isSymmetric ) throws IOException, NoSuchAlgorithmException, ClassNotFoundException, InvalidKeyException {
         if( isSymmetric )
         {
@@ -153,6 +168,17 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws NoSuchAlgorithmException
+     * @throws BadPaddingException
+     * @throws IOException
+     * @throws InvalidKeyException
+     * @throws ClassNotFoundException
+     */
     public ArrayList<Object> OkHandShakeReceived(boolean isSymmetric) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException, ClassNotFoundException {
         byte[] decryptedMessageReceivedOK = new byte[0];
         byte[] hmacHash = new byte[0];
@@ -187,6 +213,14 @@ public class ClientHandler implements Runnable {
         return result;
     }
 
+    /**
+     * @param isSymmetric
+     * @param hashAlgo
+     * @param messageDecryptS
+     * @param hmacHash
+     * @param decryptedMessageReceivedOK
+     * @throws Exception
+     */
     public void OkHandShakeSend(boolean isSymmetric , String hashAlgo , String messageDecryptS , byte[] hmacHash , byte[] decryptedMessageReceivedOK ) throws Exception {
         if( messageDecryptS.equals( userName ) )
         {
@@ -247,6 +281,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void run () {
         while ( server.isConnected( ) ) {
@@ -314,6 +351,11 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Remove client
+     * @param client client online
+     * @throws IOException
+     */
     private void removeClient ( ClientHandler client ) throws IOException {
         clientHandlers.remove( client );
         server.close( );
@@ -321,6 +363,12 @@ public class ClientHandler implements Runnable {
         out.close( );
     }
 
+    /**
+     * Broadcast a message to every user online
+     * @param message array of byte message received
+     * @param isAnnouncement boolean to verify if is announcement
+     * @throws IOException
+     */
     public void broadcastMessage ( byte[] message, boolean isAnnouncement ) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
             if ( ! this.equals( client ) ) {
@@ -329,7 +377,7 @@ public class ClientHandler implements Runnable {
                     if ( !isAnnouncement ) {
                         messageWithUserName.add( this.userName );
                     } else {
-                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        Timestamp timestamp = new Timestamp( System.currentTimeMillis( ) );
                         messageWithUserName.add( "[" + timestamp + "]" );
                     }
                     byte[] messageEncrypted = serverEncryptionChoice(message, client);
@@ -348,6 +396,11 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends a specific message to a user, by using @NAME_OF_THE_USER, where NAME_OF_THE_USER represents username of the user to send the message
+     * @param message array of byte message received
+     * @throws IOException
+     */
     public void specificMessage ( byte[] message ) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
             if (!this.equals(client)) {
@@ -370,6 +423,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Verifies the user to send the message
+     * @param message array of byte message received
+     * @param Client Clients connected
+     * @param messageWithUsername Arraylist that contains message and username
+     * @throws IOException
+     */
     public void checkAndSendToUsersSpecified (byte[] message , ClientHandler Client , ArrayList<Object> messageWithUsername) throws IOException {
         String message_verify = new String( message );
         String[] separated_message = message_verify.split(" ", 2 );
@@ -382,6 +442,14 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Generates tha respective hash, having into account the algorithm currently using
+     * @param message array of byte message received
+     * @param client Client online
+     * @return hash created
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     */
     public byte[] generateHash (byte[] message , ClientHandler client ) throws NoSuchAlgorithmException, InvalidKeyException {
         byte[] hashCreated = new byte[0];
         if(! ( client.hashUser ).equals( "none" ) )
@@ -399,6 +467,18 @@ public class ClientHandler implements Runnable {
     }
 
 
+    /**
+     * Encrypts message with respectively algorithm
+     * @param message array of byte message received
+     * @param client client online
+     * @return message encrypted
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws IOException
+     */
     private byte[] serverEncryptionChoice(byte[] message, ClientHandler client) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         byte[] messageEncrypted = new byte[0];
         if ( ( client.encUser ).equals( "AES" ) || ( client.encUser ).equals( "DES" ) || ( client.encUser ).equals( "TripleDES" ) )
@@ -412,6 +492,11 @@ public class ClientHandler implements Runnable {
         return messageEncrypted;
     }
 
+    /**
+     * @param str
+     * @param target
+     * @return
+     */
     //FONTE: https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string
     public static int countChar( String str, String target ) {
         return ( str.length() - str.replace( target, "" ).length( ) ) / target.length( );

@@ -15,6 +15,19 @@ public class SymmetricAlgorithm {
     private static final int ENCRYPT_MODE = 1;
     private static final int DECRYPT_MODE = 2;
 
+    /**
+     * Encrypts message
+     * @param text content to be encrypted
+     * @param key key encode content
+     * @param algorithm algorithm that user chose
+     * @return sent message encrypted in bytes
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws IOException
+     */
     public static byte[] encrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( algorithm );
         byte[] decodedKey = Base64.getDecoder().decode(key);
@@ -29,6 +42,19 @@ public class SymmetricAlgorithm {
         return output.toByteArray( );
     }
 
+    /**
+     * Decrypts message
+     * @param text content to be decrypted
+     * @param key key decode content
+     * @param algorithm algorithm that user chose
+     * @return FALTA VER ISTO
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws IOException
+     */
     public static byte[] decrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( algorithm );
         byte[] decodedKey = Base64.getDecoder().decode(key);
@@ -44,6 +70,13 @@ public class SymmetricAlgorithm {
         return Arrays.copyOfRange( outputByte , 0 , outputByte.length - padding );
     }
 
+    /**
+     * @param text encrypted
+     * @param blockSize size of the block
+     * @param mode mode (encrypt mode or decrypted mode)
+     * @return text divided
+     * @throws IOException
+     */
     private static ArrayList<byte[]> splitText ( byte[] text , int blockSize , int mode ) throws IOException {
         ArrayList<byte[]> textSplits = new ArrayList<>( );
         for ( int startPos = 0; startPos < text.length; startPos += blockSize ) {
@@ -73,12 +106,19 @@ public class SymmetricAlgorithm {
         return textSplits;
     }
 
+    /**
+     * Generates symmetric key
+     * @param sizeKey size of the key
+     * @param algorithm algorithm in use
+     * @return FALTA VER
+     * @throws NoSuchAlgorithmException
+     */
     public String generateKey(int sizeKey, String algorithm) throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance( algorithm );
         keyGenerator.init( sizeKey );
         SecretKey key = keyGenerator.generateKey( );
         // get base64 encoded version of the key: https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa
-        return Base64.getEncoder().encodeToString(key.getEncoded( ) );
+        return Base64.getEncoder().encodeToString( key.getEncoded( ) );
     }
 
 }

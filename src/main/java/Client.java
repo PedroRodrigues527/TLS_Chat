@@ -32,6 +32,16 @@ public class Client {
     private PrivateKey privateKey;
     private PublicKey publicServerKey;
 
+    /**
+     * @param host ip address where server is online
+     * @param port network port where server is online
+     * @param userName username chosen by the user
+     * @param encryptionUser encryption algorithm picked by user
+     * @param keySizeUser size of the key selected by the user
+     * @param hashUser hash algorithm selected by the user
+     * @param keyExchangeUser key exchange chose by the user
+     * @throws Exception
+     */
     public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser, String keyExchangeUser ) throws Exception {
         client = new Socket( host , port );
         this.userName = userName;
@@ -56,6 +66,10 @@ public class Client {
         System.out.println( "Agora já pode enviar mensagens no Chat." );
     }
 
+    /**
+     * Send to client handler user information and his choices
+     * @throws IOException
+     */
     public void helloHandShakeSend () throws IOException {
         ArrayList<Object> cipherSuite = new ArrayList<>(5);
         cipherSuite.add( userName );
@@ -66,6 +80,13 @@ public class Client {
         out.writeObject( cipherSuite );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     */
     public void helloHandShakeReceived () throws IOException, ClassNotFoundException, NoSuchAlgorithmException, InvalidKeyException {
         if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
             if(keyExchangeUser.equals("none")) {
@@ -135,6 +156,14 @@ public class Client {
         System.out.println( "SERVER_HELLO" );
     }
 
+    /**
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws NoSuchAlgorithmException
+     * @throws BadPaddingException
+     * @throws IOException
+     * @throws InvalidKeyException
+     */
     public void okHandShakeSend ( ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
         byte[] encryptedUserName;
         String hashAlgo = "Hmac" + hashUser;
@@ -168,6 +197,9 @@ public class Client {
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public void okHandShakeReceived ( ) throws Exception {
         if(hashUser.equals("none")) {
             byte[] encryptedMessageReceivedOK = (byte[]) in.readObject();
@@ -210,6 +242,17 @@ public class Client {
         }
     }
 
+    /**
+     * @param decryptedMessage
+     * @param encryptedMessage
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws NoSuchAlgorithmException
+     * @throws BadPaddingException
+     * @throws IOException
+     * @throws InvalidKeyException
+     */
     public byte[] decryptMessageOkReceive ( byte[] decryptedMessage , byte[] encryptedMessage ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
         if( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
             decryptedMessage = SymmetricAlgorithm.decrypt(encryptedMessage , symmetricKey, encryptionUser);
@@ -221,6 +264,10 @@ public class Client {
         return decryptedMessage;
     }
 
+    /**
+     * Send messages
+     * @throws IOException
+     */
     public void sendMessages ( ) throws IOException {
         while ( client.isConnected( ) ) {
             Scanner usrInput = new Scanner( System.in );
@@ -271,6 +318,9 @@ public class Client {
 
     }
 
+    /**
+     * Read respective messages
+     */
     public void readMessages () {
         new Thread( () -> {
             while ( client.isConnected( ) ) {
@@ -332,6 +382,10 @@ public class Client {
         } ).start( );
     }
 
+    /**
+     * Close connection
+     * @throws IOException
+     */
     private void closeConnection () throws IOException {
         client.close( );
         out.close( );
