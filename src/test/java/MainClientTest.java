@@ -11,10 +11,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -252,6 +250,90 @@ class MainClientTest {
 
             assertAll(
                     () -> assertEquals(key1String, key2String)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("HMac Tests")
+    class HMacTests
+    {
+        @DisplayName ("Test HMac")
+        @Test
+        public void givenDataAndKeyAndAlgorithm_whenHmacWithJava_thenSuccess()
+                throws NoSuchAlgorithmException, InvalidKeyException {
+
+            String hmacSHA256Value = "[P�\f}Ǯ���C<����*�9zU\\ouˊa��Z\f5";
+            String hmacSHA256Algorithm = "HmacSHA256";
+            String data = "baeldung";
+            String key = "123456";
+
+            byte[] result = HMac.hmacWithJava(hmacSHA256Algorithm, data, key);
+            String resultString = new String(result);
+
+            assertEquals(hmacSHA256Value, resultString);
+        }
+    }
+
+    @Nested
+    @DisplayName("RSA Tests")
+    class RSATests
+    {
+        @DisplayName ("Test RSA")
+        @Test
+        public void testRSA() throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+            RSA rsa = new RSA();
+            ArrayList<Object> keyPair1 = rsa.generateKeyPair(1024);
+            ArrayList<Object> keyPair2 = rsa.generateKeyPair(1024);
+
+            PublicKey publicKey1 = (PublicKey) keyPair1.get(1);
+            PublicKey publicKey2 = (PublicKey) keyPair2.get(1);
+            PrivateKey privateKey1 = (PrivateKey) keyPair1.get(0);
+            PrivateKey privateKey2 = (PrivateKey) keyPair2.get(0);
+
+            String message = "This is a test message.";
+
+            byte[] messageEncrypted1 = RSA.encrypt(message.getBytes(), publicKey2);
+            byte[] messageEncrypted2 = RSA.encrypt(message.getBytes(), publicKey1);
+
+            byte[] messageDecrypted1 = RSA.decrypt(messageEncrypted1, privateKey2);
+            byte[] messageDecrypted2 = RSA.decrypt(messageEncrypted2, privateKey1);
+
+            String message1 = new String(messageDecrypted1);
+            String message2 = new String(messageDecrypted2);
+
+            assertAll(
+                    () -> assertEquals(message, message1),
+                    () -> assertEquals(message, message2)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("SymmetricAlgorithm Tests")
+    class SymmetricAlgorithmTests
+    {
+        @DisplayName ("Test SymmetricAlgorithm")
+        @Test
+        public void testSymmetricAlgorithm() throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException {
+            SymmetricAlgorithm sa = new SymmetricAlgorithm();
+            String message = "This is a test message.";
+            String message2 = "QWERTYUIOPASDFG";
+            String algorithm = "AES";
+
+            String secretKey = sa.generateKey(128, algorithm);
+
+            byte[] encryptedMessage = SymmetricAlgorithm.encrypt(message.getBytes(), secretKey, algorithm);
+            byte[] decryptedMessage = SymmetricAlgorithm.decrypt(encryptedMessage, secretKey, algorithm);
+            String messageOutput = new String(decryptedMessage);
+
+            byte[] encryptedMessage1 = SymmetricAlgorithm.encrypt(message2.getBytes(), secretKey, algorithm);
+            byte[] decryptedMessage1 = SymmetricAlgorithm.decrypt(encryptedMessage1, secretKey, algorithm);
+            String messageOutput1 = new String(decryptedMessage1);
+
+            assertAll(
+                    () -> assertEquals(message, messageOutput),
+                    () -> assertEquals(message2, messageOutput1)
             );
         }
     }
