@@ -129,7 +129,7 @@ public class MainClient {
 
         //Insert choice
         String userchoice;
-        String[] hashes = { "SHA1", "SHA224", "SHA256" , "SHA384" , "SHA512" , "MD5" };
+        String[] hashes = { "SHA1" , "SHA224" , "SHA256" , "SHA384" , "SHA512" , "MD5" };
 
         System.out.println( "Choose type of hash (none[default], SHA1, SHA224, SHA256, SHA384, SHA512 or MD5): " );
         userchoice = usrInput.nextLine( );
@@ -146,11 +146,11 @@ public class MainClient {
 
         //Insert choice
         String userchoice;
-        String[] hashes = { "DH", "ECDH" };
+        String[] hashes = { "DH" , "ECDH" };
 
         System.out.println( "Choose type of key exchange (none[default], DH or ECDH): " );
         userchoice = usrInput.nextLine( );
-        if (!Arrays.asList( hashes ).contains( userchoice )) {
+        if (!Arrays.asList( hashes ).contains( userchoice ) ) {
             userchoice = "none";
         }
 

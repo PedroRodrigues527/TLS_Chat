@@ -72,12 +72,12 @@ public class SymmetricAlgorithm {
         return textSplits;
     }
 
-    public String generateKey(int n, String algorithm) throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance(algorithm);
-        keyGenerator.init(n);
-        SecretKey key = keyGenerator.generateKey();
+    public String generateKey(int sizeKey, String algorithm) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance( algorithm );
+        keyGenerator.init( sizeKey );
+        SecretKey key = keyGenerator.generateKey( );
         // get base64 encoded version of the key: https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa
-        return Base64.getEncoder().encodeToString(key.getEncoded());
+        return Base64.getEncoder().encodeToString(key.getEncoded( ) );
     }
 
 }

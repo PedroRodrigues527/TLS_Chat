@@ -267,23 +267,25 @@ public class ClientHandler implements Runnable {
                     byte[] messageEncrypted = serverEncryptionChoice(message, client);
                     messageWithUserName.add(messageEncrypted);
 
-                    if(!(client.hashUser).equals("none"))
+                    addUserNameToMessage( messageWithUserName , message , client );
+
+                    /*if(! ( client.hashUser ).equals( "none" ) )
                     {
                         if ( ( client.encUser ).equals( "AES" ) || ( client.encUser ).equals( "DES" ) || ( client.encUser ).equals( "TripleDES" ) )
                         {
-                            messageWithUserName.add( HMac.hmacWithJava("Hmac" + client.hashUser, new String(message), Base64.getEncoder().encodeToString(client.symmetricKey.getBytes())));
+                            messageWithUserName.add( HMac.hmacWithJava( "Hmac" + client.hashUser , new String( message ) , Base64.getEncoder().encodeToString( client.symmetricKey.getBytes( ) ) ) );
                         }
                         else if( ( client.encUser ).equals( "RSA" ) )
                         {
-                            messageWithUserName.add( HMac.hmacWithJava("Hmac" + client.hashUser, new String(message), Base64.getEncoder().encodeToString(client.publicClientKey.getEncoded())));
+                            messageWithUserName.add( HMac.hmacWithJava("Hmac" + client.hashUser , new String( message ), Base64.getEncoder().encodeToString( client.publicClientKey.getEncoded( ) ) ) );
                         }
-                    }
+                    }*/
 
                     client.out.writeObject( messageWithUserName );
                     client.out.flush( );
                 } catch (IOException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
-                         BadPaddingException | InvalidKeyException e) {
-                    removeClient(client);
+                         BadPaddingException | InvalidKeyException e ) {
+                    removeClient( client );
                 }
             }
         }
@@ -298,17 +300,7 @@ public class ClientHandler implements Runnable {
                     byte[] messageEncrypted = serverEncryptionChoice(message, client);
                     messageWithUserName.add(messageEncrypted);
 
-                    if(!(client.hashUser).equals("none"))
-                    {
-                        if ( ( client.encUser ).equals( "AES" ) || ( client.encUser ).equals( "DES" ) || ( client.encUser ).equals( "TripleDES" ) )
-                        {
-                            messageWithUserName.add( HMac.hmacWithJava("Hmac" + client.hashUser, new String(message), Base64.getEncoder().encodeToString(client.symmetricKey.getBytes())));
-                        }
-                        else if( ( client.encUser ).equals( "RSA" ) )
-                        {
-                            messageWithUserName.add( HMac.hmacWithJava("Hmac" + client.hashUser, new String(message), Base64.getEncoder().encodeToString(client.publicClientKey.getEncoded())));
-                        }
-                    }
+                    addUserNameToMessage( messageWithUserName , message , client );
 
                     String message_verify = new String( message );
                     String[] separated_message = message_verify.split(" ", 2 );
@@ -326,6 +318,22 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+
+    public ArrayList addUserNameToMessage ( ArrayList messageWithUsername , byte[] message , ClientHandler client ) throws NoSuchAlgorithmException, InvalidKeyException {
+        if(! ( client.hashUser ).equals( "none" ) )
+        {
+            if ( ( client.encUser ).equals( "AES" ) || ( client.encUser ).equals( "DES" ) || ( client.encUser ).equals( "TripleDES" ) )
+            {
+                messageWithUsername.add( HMac.hmacWithJava( "Hmac" + client.hashUser , new String( message ) , Base64.getEncoder().encodeToString( client.symmetricKey.getBytes( ) ) ) );
+            }
+            else if( ( client.encUser ).equals( "RSA" ) )
+            {
+                messageWithUsername.add( HMac.hmacWithJava("Hmac" + client.hashUser , new String( message ), Base64.getEncoder().encodeToString( client.publicClientKey.getEncoded( ) ) ) );
+            }
+        }
+        return messageWithUsername;
+    }
+
 
     private byte[] serverEncryptionChoice(byte[] message, ClientHandler client) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         byte[] messageEncrypted = new byte[0];
