@@ -12,10 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,17 +37,17 @@ class MainClientTest {
         public void testUsernameChoice() {
             String userInput = String.format("User%s",
                     System.lineSeparator());
-            detectInputOutput(userInput);
+            Scanner scanner = new Scanner(userInput);
 
-            String userNameOutput = MainClient.usernameChoice(); // call the username choice method
+            String userNameOutput = MainClient.usernameChoice(scanner); // call the username choice method
 
 
             String userInput2 = String.format("%stest%s",
                     System.lineSeparator(),
                     System.lineSeparator());
-            detectInputOutput(userInput2);
+            scanner = new Scanner(userInput2);
 
-            String userNameOutput2 = MainClient.usernameChoice();
+            String userNameOutput2 = MainClient.usernameChoice(scanner);
 
             // checkout output
             assertAll(
@@ -64,18 +61,18 @@ class MainClientTest {
         public void testEncryptionChoice() {
             String userInput = String.format("RSA%s",
                     System.lineSeparator());
-            detectInputOutput(userInput);
+            Scanner scanner = new Scanner(userInput);
 
-            String encryptionOutput = MainClient.encryptionChoice(); // call the encryption choice method
+            String encryptionOutput = MainClient.encryptionChoice(scanner); // call the encryption choice method
 
 
             String userInput2 = String.format("%st%sAES%s",
                     System.lineSeparator(),
                     System.lineSeparator(),
                     System.lineSeparator());
-            detectInputOutput(userInput2);
+            scanner = new Scanner(userInput2);
 
-            String encryptionOutput2 = MainClient.encryptionChoice();
+            String encryptionOutput2 = MainClient.encryptionChoice(scanner);
 
             // checkout output
             assertAll(
@@ -91,22 +88,22 @@ class MainClientTest {
             String userInput = String.format("%s128%s",
                     System.lineSeparator(),
                     System.lineSeparator());
-            detectInputOutput(userInput);
+            Scanner scanner = new Scanner(userInput);
 
-            int keySizeOutput = MainClient.keySizeChoice("AES"); // call the key size choice method
+            int keySizeOutput = MainClient.keySizeChoice("AES", scanner); // call the key size choice method
 
 
             String userInput2 = String.format("%s1%s1024%s",
                     System.lineSeparator(),
                     System.lineSeparator(),
                     System.lineSeparator());
-            detectInputOutput(userInput2);
+            scanner = new Scanner(userInput2);
 
-            int keySizeOutput2 = MainClient.keySizeChoice("RSA");
+            int keySizeOutput2 = MainClient.keySizeChoice("RSA", scanner);
 
-            int keySizeOutput3 = MainClient.keySizeChoice("DES");
+            int keySizeOutput3 = MainClient.keySizeChoice("DES", scanner);
 
-            int keySizeOutput4 = MainClient.keySizeChoice("TripleDES");
+            int keySizeOutput4 = MainClient.keySizeChoice("TripleDES", scanner);
 
             // checkout output
             assertAll(
@@ -124,16 +121,16 @@ class MainClientTest {
         public void testHashChoice() {
             String userInput = String.format("%s",
                     System.lineSeparator());
-            detectInputOutput(userInput);
+            Scanner scanner = new Scanner(userInput);
 
-            String hashOutput = MainClient.hashChoice(); // call the hash choice method
+            String hashOutput = MainClient.hashChoice(scanner); // call the hash choice method
 
 
             String userInput2 = String.format("SHA256%s",
                     System.lineSeparator());
-            detectInputOutput(userInput2);
+            scanner = new Scanner(userInput2);
 
-            String hashOutput2 = MainClient.hashChoice();
+            String hashOutput2 = MainClient.hashChoice(scanner);
 
             // checkout output
             assertAll(
@@ -148,22 +145,64 @@ class MainClientTest {
         public void testKeyExchangeChoice() {
             String userInput = String.format("%s",
                     System.lineSeparator());
-            detectInputOutput(userInput);
+            Scanner scanner = new Scanner(userInput);
 
-            String keyExchangeOutput = MainClient.keyExchangeChoice(); // call the key exchange choice method
+            String keyExchangeOutput = MainClient.keyExchangeChoice(scanner); // call the key exchange choice method
 
 
             String userInput2 = String.format("DH%s",
                     System.lineSeparator());
-            detectInputOutput(userInput2);
+            scanner = new Scanner(userInput2);
 
-            String keyExchangeOutput2 = MainClient.keyExchangeChoice();
+            String keyExchangeOutput2 = MainClient.keyExchangeChoice(scanner);
 
             // checkout output
             assertAll(
                     () -> assertEquals("DH",keyExchangeOutput2),
                     () -> assertEquals("none",keyExchangeOutput),
                     () -> assertNotEquals("ECDH",keyExchangeOutput2)
+            );
+        }
+
+        @DisplayName ("Test all client choices")
+        @Test
+        public void testClientChoices() throws Exception {
+            String userInput = String.format("userChoice%sAES%s128%sSHA256%sDH%sExit%s",
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator());
+            ByteArrayInputStream bais = new ByteArrayInputStream(userInput.getBytes());
+            System.setIn(bais);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream printStream = new PrintStream(baos);
+            System.setOut(printStream);
+
+            MainClient.main(new String[0]); // call the MainClient main method
+
+
+            String userInput2 = String.format("userChoice%sRSA%s1024%sSHA256%sExit%s",
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator());
+            ByteArrayInputStream bais2 = new ByteArrayInputStream(userInput2.getBytes());
+            System.setIn(bais2);
+
+            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+            PrintStream printStream2 = new PrintStream(baos2);
+            System.setOut(printStream2);
+
+            MainClient.main(new String[0]);
+
+            // checkout output
+            assertAll(
+                    () -> assertTrue((baos.toString()).contains("Connecting to server...")),
+                    () -> assertTrue((baos2.toString()).contains("Connecting to server..."))
             );
         }
     }
@@ -347,13 +386,19 @@ class MainClientTest {
     }
 
     @Nested
-    @DisplayName("Client Test")
-    class ClientTests
+    @DisplayName("Message Test")
+    class MessageClientTests
     {
 
-        @DisplayName ("Test client")
+        @BeforeEach
+        void setUp() throws IOException {
+            MainServer.main(new String[0]);
+        }
+
+        @DisplayName ("Test messages sent and received")
         @Test
-        public void testClient() throws Exception {
+        public void testMessagesClient() throws Exception {
+
             Client client1 = new Client( "127.0.0.1" , 8000 , "user1", "AES", 256, "MD5", "DH" );
             Client client2 = new Client( "127.0.0.1" , 8000 , "user2", "AES", 256, "SHA256", "ECDH" );
             Client client3 = new Client( "127.0.0.1" , 8000 , "user3", "AES", 256, "none", "none" );
@@ -366,6 +411,66 @@ class MainClientTest {
             Client client10 = new Client( "127.0.0.1" , 8000 , "user10", "RSA", 1024, "none", "none" );
             Client client11 = new Client( "127.0.0.1" , 8000 , "user11", "RSA", 2048, "SHA256", "none" );
 
+            Client client0 = new Client( "127.0.0.1" , 8000 , "muser0", "AES", 128, "none", "none" );
+
+            client1.readMessages();
+            client2.readMessages();
+            client3.readMessages();
+            client4.readMessages();
+            client5.readMessages();
+            client6.readMessages();
+            client7.readMessages();
+            client8.readMessages();
+            client9.readMessages();
+            client10.readMessages();
+            client11.readMessages();
+
+            String userInputtest = String.format("%s" +
+                            "message%s" +
+                            "@user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage%s" +
+                            "Exit%s",
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator(),
+                    System.lineSeparator());
+
+            Scanner scanner = new Scanner(userInputtest);
+            client0.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client1.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client2.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client3.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client4.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client5.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client6.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client7.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client8.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client9.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client10.sendMessages(scanner);
+            Thread.sleep(2000);
+            scanner = new Scanner(userInputtest);
+            client11.sendMessages(scanner);
+            Thread.sleep(2000);
+
             // checkout values
             assertAll(
                     () -> assertEquals("user1",client1.getUserName()),
@@ -374,52 +479,6 @@ class MainClientTest {
                     () -> assertEquals("MD5",client1.getHashUser()),
                     () -> assertEquals("DH",client1.getKeyExchangeUser())
             );
-        }
-
-    }
-
-    @Nested
-    @DisplayName("Message Test")
-    class MessageTests
-    {
-
-        @BeforeEach
-        void setUp() throws IOException {
-            MainServer.main(new String[0]);
-        }
-
-        @DisplayName ("Test messages sent and received")
-        @Test
-        public void testMessages() throws Exception {
-            /*InputStream sysInBackup = System.in;
-
-            Client client1 = new Client( "127.0.0.1" , 8000 , "user1", "AES", 256, "SHA256", "none" );
-            Client client2 = new Client( "127.0.0.1" , 8000 , "user2", "AES", 128, "none", "none" );
-            //Client client3 = new Client( "127.0.0.1" , 8000 , "user3", "DES", 56, "MD5", "none" );
-            //Client client4 = new Client( "127.0.0.1" , 8000 , "user4", "DES", 56, "none", "none" );
-            //Client client5 = new Client( "127.0.0.1" , 8000 , "user5", "TripleDES", 3*56, "SHA512", "none" );
-            //Client client6 = new Client( "127.0.0.1" , 8000 , "user6", "TripleDES", 3*56, "none", "none" );
-            Client client7 = new Client( "127.0.0.1" , 8000 , "user7", "RSA", 1024, "none", "none" );
-            Client client8 = new Client( "127.0.0.1" , 8000 , "user8", "RSA", 2048, "SHA256", "none" );
-
-            String userInput = String.format("Hi%sExit%s",
-                    System.lineSeparator(),
-                    System.lineSeparator());
-            detectInputOutput(userInput);
-
-            client2.readMessages();
-            client1.sendMessages();
-
-            System.setIn(sysInBackup);*/
-
-            // checkout values
-            /*assertAll(
-                    () -> assertEquals(userName1,client1.getUserName()),
-                    () -> assertEquals(encryptionUser1,client1.getEncryptionUser()),
-                    () -> assertEquals(keyUserSize1,client1.getKeySizeUser()),
-                    () -> assertEquals(hashUser1,client1.getHashUser()),
-                    () -> assertEquals(keyExchangeUser1,client1.getKeyExchangeUser())
-            );*/
         }
 
     }

@@ -21,17 +21,13 @@ public class Server implements Runnable {
             }
         } catch ( IOException | ClassNotFoundException e ) {
             try {
-                closeConnection( );
+                server.close( );
             } catch ( IOException ex ) {
                 ex.printStackTrace( );
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void closeConnection () throws IOException {
-        server.close( );
     }
 
 }

@@ -15,18 +15,19 @@ public class MainClient {
     public static void main ( String[] args ) throws Exception {
         String userName, encryptionUser, hashUser, keyExchangeUser;
         int keyUserSize;
+        Scanner usrInput = new Scanner( System.in );
 
         //Insert username
-        userName = usernameChoice();
+        userName = usernameChoice(usrInput);
 
         //Insert encryption choice
-        encryptionUser = encryptionChoice();
+        encryptionUser = encryptionChoice(usrInput);
 
         //Insert key size
-        keyUserSize = keySizeChoice(encryptionUser);
+        keyUserSize = keySizeChoice(encryptionUser, usrInput);
 
         //Insert hash mode
-        hashUser = hashChoice();
+        hashUser = hashChoice(usrInput);
 
         //Insert key exchange mode
         if(encryptionUser.equals("RSA"))
@@ -35,24 +36,22 @@ public class MainClient {
             keyExchangeUser = "none";
         }
         else {
-            keyExchangeUser = keyExchangeChoice();
+            keyExchangeUser = keyExchangeChoice(usrInput);
         }
 
         System.out.println("Connecting to server...");
 
         Client client = new Client( "127.0.0.1" , 8000 , userName, encryptionUser, keyUserSize, hashUser, keyExchangeUser );
         client.readMessages( );
-        client.sendMessages( );
+        client.sendMessages( usrInput );
     }
 
     /**
      * Retrieve username written by the user
      * @return username chosen
      */
-    public static String usernameChoice()
+    public static String usernameChoice(Scanner usrInput)
     {
-        Scanner usrInput = new Scanner( System.in );
-
         //Insert username
         String userchoice;
         do {
@@ -70,10 +69,8 @@ public class MainClient {
      * Retrieve username written by the user
      * @return Encryption algorithm chosen
      */
-    public static String encryptionChoice()
+    public static String encryptionChoice(Scanner usrInput)
     {
-        Scanner usrInput = new Scanner( System.in );
-
         //Insert encryption choice
         String userchoice;
         String[] encryptions = { "AES" , "DES" , "TripleDES" , "RSA" };
@@ -93,10 +90,8 @@ public class MainClient {
      * @param encryption_choice encryption algorithm chosen
      * @return size of the key selected
      */
-    public static int keySizeChoice( String encryption_choice )
+    public static int keySizeChoice( String encryption_choice, Scanner usrInput )
     {
-        Scanner usrInput = new Scanner( System.in );
-
         //Insert key size choice
         String userchoice;
         int key_size_choice = 0;
@@ -148,10 +143,8 @@ public class MainClient {
      * Allows the user to chose the hashs algorithm.
      * @return hash chosen.
      */
-    public static String hashChoice()
+    public static String hashChoice( Scanner usrInput)
     {
-        Scanner usrInput = new Scanner( System.in );
-
         //Insert choice
         String userchoice;
         String[] hashes = { "SHA1" , "SHA224" , "SHA256" , "SHA384" , "SHA512" , "MD5" };
@@ -169,10 +162,8 @@ public class MainClient {
      * Allows user to chose the key exchange algorithm
      * @return key exchange selected
      */
-    public static String keyExchangeChoice()
+    public static String keyExchangeChoice(Scanner usrInput)
     {
-        Scanner usrInput = new Scanner( System.in );
-
         //Insert choice
         String userchoice;
         String[] hashes = { "DH" , "ECDH" };

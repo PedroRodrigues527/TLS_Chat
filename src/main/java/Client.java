@@ -268,9 +268,9 @@ public class Client {
      * Send messages
      * @throws IOException
      */
-    public void sendMessages ( ) throws IOException {
+    public void sendMessages ( Scanner usrInput ) throws IOException {
         while ( client.isConnected( ) ) {
-            Scanner usrInput = new Scanner( System.in );
+
             String message;
             do {
                 message = usrInput.nextLine( );
