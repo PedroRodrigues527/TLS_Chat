@@ -278,6 +278,12 @@ public class Client {
                 {
                     System.out.println("You can't send an empty message.");
                 }
+                else if(message.equals("Exit"))
+                {
+                    System.out.println("Exiting Chat...");
+                    closeConnection();
+                    return;
+                }
             } while(message.equals(""));
             byte[] messageByte = new byte[0];
             try {
@@ -435,42 +441,6 @@ public class Client {
      */
     public int getKeySizeUser() {
         return keySizeUser;
-    }
-
-    /**
-     * Gets symmetricKey
-     *
-     * @return value of symmetricKey
-     */
-    public String getSymmetricKey() {
-        return symmetricKey;
-    }
-
-    /**
-     * Gets publicKey
-     *
-     * @return value of publicKey
-     */
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
-
-    /**
-     * Gets privateKey
-     *
-     * @return value of privateKey
-     */
-    public PrivateKey getPrivateKey() {
-        return privateKey;
-    }
-
-    /**
-     * Gets publicServerKey
-     *
-     * @return value of publicServerKey
-     */
-    public PublicKey getPublicServerKey() {
-        return publicServerKey;
     }
 
 }

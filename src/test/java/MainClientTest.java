@@ -346,39 +346,81 @@ class MainClientTest {
         }
     }
 
-    /*@Nested
+    @Nested
     @DisplayName("Client Test")
     class ClientTests
     {
-        private Server server;
-        private Thread serverThread;
-
-        @BeforeEach
-        void setUp() throws IOException {
-            this.server = new Server(8000);
-            serverThread = new Thread( server );
-            serverThread.start();
-        }
 
         @DisplayName ("Test client")
         @Test
         public void testClient() throws Exception {
-            String userName1 = "user";
-            String encryptionUser1 = "DES";
-            int keyUserSize1 = 56;
-            String hashUser1 = "none";
-            String keyExchangeUser1 = "none";
-            Client client1 = new Client( "127.0.0.1" , 8000 , userName1, encryptionUser1, keyUserSize1, hashUser1, keyExchangeUser1 );
+            Client client1 = new Client( "127.0.0.1" , 8000 , "user1", "AES", 256, "MD5", "DH" );
+            Client client2 = new Client( "127.0.0.1" , 8000 , "user2", "AES", 256, "SHA256", "ECDH" );
+            Client client3 = new Client( "127.0.0.1" , 8000 , "user3", "AES", 256, "none", "none" );
+            Client client4 = new Client( "127.0.0.1" , 8000 , "user4", "DES", 56, "MD5", "DH" );
+            Client client5 = new Client( "127.0.0.1" , 8000 , "user5", "DES", 56, "SHA512", "ECDH" );
+            Client client6 = new Client( "127.0.0.1" , 8000 , "user6", "DES", 56, "none", "none" );
+            Client client7 = new Client( "127.0.0.1" , 8000 , "user7", "TripleDES", 3*56, "MD5", "DH" );
+            Client client8 = new Client( "127.0.0.1" , 8000 , "user8", "TripleDES", 3*56, "SHA512", "ECDH" );
+            Client client9 = new Client( "127.0.0.1" , 8000 , "user9", "TripleDES", 3*56, "none", "none" );
+            Client client10 = new Client( "127.0.0.1" , 8000 , "user10", "RSA", 1024, "none", "none" );
+            Client client11 = new Client( "127.0.0.1" , 8000 , "user11", "RSA", 2048, "SHA256", "none" );
 
             // checkout values
             assertAll(
+                    () -> assertEquals("user1",client1.getUserName()),
+                    () -> assertEquals("AES",client1.getEncryptionUser()),
+                    () -> assertEquals(256,client1.getKeySizeUser()),
+                    () -> assertEquals("MD5",client1.getHashUser()),
+                    () -> assertEquals("DH",client1.getKeyExchangeUser())
+            );
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Message Test")
+    class MessageTests
+    {
+
+        @BeforeEach
+        void setUp() throws IOException {
+            MainServer.main(new String[0]);
+        }
+
+        @DisplayName ("Test messages sent and received")
+        @Test
+        public void testMessages() throws Exception {
+            /*InputStream sysInBackup = System.in;
+
+            Client client1 = new Client( "127.0.0.1" , 8000 , "user1", "AES", 256, "SHA256", "none" );
+            Client client2 = new Client( "127.0.0.1" , 8000 , "user2", "AES", 128, "none", "none" );
+            //Client client3 = new Client( "127.0.0.1" , 8000 , "user3", "DES", 56, "MD5", "none" );
+            //Client client4 = new Client( "127.0.0.1" , 8000 , "user4", "DES", 56, "none", "none" );
+            //Client client5 = new Client( "127.0.0.1" , 8000 , "user5", "TripleDES", 3*56, "SHA512", "none" );
+            //Client client6 = new Client( "127.0.0.1" , 8000 , "user6", "TripleDES", 3*56, "none", "none" );
+            Client client7 = new Client( "127.0.0.1" , 8000 , "user7", "RSA", 1024, "none", "none" );
+            Client client8 = new Client( "127.0.0.1" , 8000 , "user8", "RSA", 2048, "SHA256", "none" );
+
+            String userInput = String.format("Hi%sExit%s",
+                    System.lineSeparator(),
+                    System.lineSeparator());
+            detectInputOutput(userInput);
+
+            client2.readMessages();
+            client1.sendMessages();
+
+            System.setIn(sysInBackup);*/
+
+            // checkout values
+            /*assertAll(
                     () -> assertEquals(userName1,client1.getUserName()),
                     () -> assertEquals(encryptionUser1,client1.getEncryptionUser()),
                     () -> assertEquals(keyUserSize1,client1.getKeySizeUser()),
                     () -> assertEquals(hashUser1,client1.getHashUser()),
                     () -> assertEquals(keyExchangeUser1,client1.getKeyExchangeUser())
-            );
+            );*/
         }
 
-    }*/
+    }
 }
