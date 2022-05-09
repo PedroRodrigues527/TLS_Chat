@@ -19,7 +19,7 @@ import java.util.Base64;
 import java.util.Scanner;
 
 public class Client {
-
+    //variáveis de instância
     private final Socket client;
     private final ObjectInputStream in;
     private final ObjectOutputStream out;
@@ -81,6 +81,7 @@ public class Client {
     }
 
     /**
+     *Method responsible for the return of the Server_Hello, utilizing all the encryption methods and protocols.
      *
      * @throws IOException
      * @throws ClassNotFoundException
@@ -198,6 +199,8 @@ public class Client {
     }
 
     /**
+     * Method responsible for the OK Message on the receiver end, in order to ensure the safety of the Message.
+     *
      * @throws Exception
      */
     public void okHandShakeReceived ( ) throws Exception {
@@ -243,6 +246,8 @@ public class Client {
     }
 
     /**
+     * Method responsible with the return of the decrypted Message utilizing the Encryption protocols.
+     *
      * @param decryptedMessage
      * @param encryptedMessage
      * @return
@@ -265,7 +270,8 @@ public class Client {
     }
 
     /**
-     * Send messages
+     * Send messages as long as the client is connected and also uses encrpytion protocols in order to maintain the security of the message's context
+     *
      * @throws IOException
      */
     public void sendMessages ( Scanner usrInput ) throws IOException {
@@ -325,7 +331,7 @@ public class Client {
     }
 
     /**
-     * Read respective messages
+     * Method responsible with Reading the respective messages
      */
     public void readMessages () {
         new Thread( () -> {
@@ -389,7 +395,8 @@ public class Client {
     }
 
     /**
-     * Close connection
+     * Method that Closes the connection on the client side
+     *
      * @throws IOException
      */
     private void closeConnection () throws IOException {
