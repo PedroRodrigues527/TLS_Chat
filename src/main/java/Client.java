@@ -68,6 +68,7 @@ public class Client {
 
     /**
      * Send to client handler user information and his choices
+     *
      * @throws IOException
      */
     public void helloHandShakeSend () throws IOException {
@@ -106,6 +107,7 @@ public class Client {
 
                 BigInteger secretKeyDH = DiffieHellman.generateSecretKey(BigInteger.valueOf(N), publicServerKeyDH, privateKeyDH);
                 byte[] secretKeyDHByte;
+                //Verificação do tipo de encriptação e chave secreta que será utilizada.
                 if( encryptionUser.equals( "AES" ) ) {
                     secretKeyDHByte = ByteBuffer.allocate((keySizeUser / Byte.SIZE)).put(secretKeyDH.toByteArray()).array();
                 }
@@ -122,6 +124,7 @@ public class Client {
             }
             else if(keyExchangeUser.equals("ECDH"))
             {
+                //Criação dos objetos
                 ECDiffieHellman ecdh = new ECDiffieHellman();
                 KeyPair keyPair = ecdh.generateKeyPair();
                 PublicKey publicKeyECDH = ecdh.getPublicKey(keyPair);
@@ -158,6 +161,8 @@ public class Client {
     }
 
     /**
+     * Method responsible for the OK Message on the sender end, in order to ensure the safety of the Message.
+     *
      * @throws NoSuchPaddingException
      * @throws IllegalBlockSizeException
      * @throws NoSuchAlgorithmException
@@ -229,6 +234,7 @@ public class Client {
             String messageDecryptS = new String(decryptedMessageReceivedOK, StandardCharsets.UTF_8);
             String hashAlgo = "Hmac" + hashUser;
             byte[] hmacHashResult = new byte[0];
+            //Utilização dos vários tipos de protocolos de encriptação
             if (encryptionUser.equals("RSA")) {
                 hmacHashResult = HMac.hmacWithJava(hashAlgo, messageDecryptS, Base64.getEncoder().encodeToString(publicServerKey.getEncoded()));
             } else if (encryptionUser.equals("AES") || encryptionUser.equals("DES") || encryptionUser.equals("TripleDES")) {
@@ -404,7 +410,7 @@ public class Client {
         out.close( );
         in.close( );
     }
-
+    // Implementação dos Getters
     /**
      * Gets userName
      *
