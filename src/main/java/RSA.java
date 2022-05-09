@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class RSA {
 
     /**
-     * Generate private and public key
+     * Method that Generates the private and public key
+     *
      * @param sizeKey size of the key selected
      * @return arraylist that contains public and private key
      * @throws NoSuchAlgorithmException
@@ -26,7 +27,8 @@ public class RSA {
     }
 
     /**
-     * Encrypts message with RSA algorithm
+     * Method that Encrypts the specified message with the RSA algorithm.
+     *
      * @param message message to be encrypted
      * @param publicKey key to encrypt content
      * @return
@@ -43,7 +45,8 @@ public class RSA {
     }
 
     /**
-     * Decrypts message with RSA algorithm
+     * Method that Decrypts the specified message with the RSA algorithm.
+     *
      * @param message message to be decrypted
      * @param privateKey key to decrypt message
      * @return
