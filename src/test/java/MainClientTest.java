@@ -478,6 +478,83 @@ class MainClientTest {
                     () -> assertEquals(256,client1.getKeySizeUser()),
                     () -> assertEquals("MD5",client1.getHashUser()),
                     () -> assertEquals("DH",client1.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user2",client2.getUserName()),
+                    () -> assertEquals("AES",client2.getEncryptionUser()),
+                    () -> assertEquals(256,client2.getKeySizeUser()),
+                    () -> assertEquals("SHA256",client2.getHashUser()),
+                    () -> assertEquals("ECDH",client2.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user3",client3.getUserName()),
+                    () -> assertEquals("AES",client3.getEncryptionUser()),
+                    () -> assertEquals(256,client3.getKeySizeUser()),
+                    () -> assertEquals("none",client3.getHashUser()),
+                    () -> assertEquals("none",client3.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user4",client4.getUserName()),
+                    () -> assertEquals("DES",client4.getEncryptionUser()),
+                    () -> assertEquals(56,client4.getKeySizeUser()),
+                    () -> assertEquals("MD5",client4.getHashUser()),
+                    () -> assertEquals("DH",client4.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user5",client5.getUserName()),
+                    () -> assertEquals("DES",client5.getEncryptionUser()),
+                    () -> assertEquals(56,client5.getKeySizeUser()),
+                    () -> assertEquals("SHA512",client5.getHashUser()),
+                    () -> assertEquals("ECDH",client5.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user6",client6.getUserName()),
+                    () -> assertEquals("DES",client6.getEncryptionUser()),
+                    () -> assertEquals(56,client6.getKeySizeUser()),
+                    () -> assertEquals("none",client6.getHashUser()),
+                    () -> assertEquals("none",client6.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user7",client7.getUserName()),
+                    () -> assertEquals("TripleDES",client7.getEncryptionUser()),
+                    () -> assertEquals(3*56,client7.getKeySizeUser()),
+                    () -> assertEquals("MD5",client7.getHashUser()),
+                    () -> assertEquals("DH",client7.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user8",client8.getUserName()),
+                    () -> assertEquals("TripleDES",client8.getEncryptionUser()),
+                    () -> assertEquals(3*56,client8.getKeySizeUser()),
+                    () -> assertEquals("SHA512",client8.getHashUser()),
+                    () -> assertEquals("ECDH",client8.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user9",client9.getUserName()),
+                    () -> assertEquals("TripleDES",client9.getEncryptionUser()),
+                    () -> assertEquals(3*56,client9.getKeySizeUser()),
+                    () -> assertEquals("none",client9.getHashUser()),
+                    () -> assertEquals("none",client9.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user10",client10.getUserName()),
+                    () -> assertEquals("RSA",client10.getEncryptionUser()),
+                    () -> assertEquals(1024,client10.getKeySizeUser()),
+                    () -> assertEquals("none",client10.getHashUser()),
+                    () -> assertEquals("none",client10.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("user11",client11.getUserName()),
+                    () -> assertEquals("RSA",client11.getEncryptionUser()),
+                    () -> assertEquals(2048,client11.getKeySizeUser()),
+                    () -> assertEquals("SHA256",client11.getHashUser()),
+                    () -> assertEquals("none",client11.getKeyExchangeUser())
+            )
+            ;assertAll(
+                    () -> assertEquals("muser0",client0.getUserName()),
+                    () -> assertEquals("AES",client0.getEncryptionUser()),
+                    () -> assertEquals(128,client0.getKeySizeUser()),
+                    () -> assertEquals("none",client0.getHashUser()),
+                    () -> assertEquals("none",client0.getKeyExchangeUser())
             );
         }
 
