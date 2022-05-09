@@ -76,7 +76,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Parte of 'TLS' agreement between client and server.
+     * Method responsible with a Parte of the'TLS' agreement between client and server.
      *
      * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
      * @throws IOException
@@ -169,6 +169,9 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * This function receives an encrypted message from the client and possibly a hash, also this function returns the message with
+     * the decryption done and the HMac received from the client.
+     *
      * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
      * @return
      * @throws NoSuchPaddingException
@@ -214,6 +217,8 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * Method responsible for the OK Message on the sender end, in order to ensure the safety of the Message.
+     *
      * @param isSymmetric
      * @param hashAlgo
      * @param messageDecryptS
@@ -352,7 +357,8 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Remove client
+     * Method responsible with the Removal of the client.
+     *
      * @param client client online
      * @throws IOException
      */
@@ -364,7 +370,8 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Broadcast a message to every user online
+     * Method that will Broadcast a message to every user online
+     *
      * @param message array of byte message received
      * @param isAnnouncement boolean to verify if is announcement
      * @throws IOException
@@ -397,7 +404,8 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Sends a specific message to a user, by using @NAME_OF_THE_USER, where NAME_OF_THE_USER represents username of the user to send the message
+     * This Method Sends a specific message to a user, by using @NAME_OF_THE_USER, where NAME_OF_THE_USER represents username of the user to send the message.
+     *
      * @param message array of byte message received
      * @throws IOException
      */
@@ -424,7 +432,8 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Verifies the user to send the message
+     * This method Verifies the user to send the specified message.
+     *
      * @param message array of byte message received
      * @param Client Clients connected
      * @param messageWithUsername Arraylist that contains message and username
@@ -443,7 +452,8 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * Generates tha respective hash, having into account the algorithm currently using
+     * This Method Generates the respective hash, having into account the algorithm currently using.
+     *
      * @param message array of byte message received
      * @param client Client online
      * @return hash created
@@ -468,7 +478,8 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     * Encrypts message with respectively algorithm
+     * This Method Encrypts message with respectively algorithm
+     *
      * @param message array of byte message received
      * @param client client online
      * @return message encrypted
