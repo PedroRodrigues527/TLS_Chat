@@ -47,7 +47,8 @@ public class MainClient {
     }
 
     /**
-     * Retrieve username written by the user
+     * Method that will Retrieve the username written by the user
+     *
      * @return username chosen
      */
     public static String usernameChoice(Scanner usrInput)
@@ -66,7 +67,8 @@ public class MainClient {
     }
 
     /**
-     * Retrieve username written by the user
+     * Method that will Retrieve the encryption choice written by the user
+     *
      * @return Encryption algorithm chosen
      */
     public static String encryptionChoice(Scanner usrInput)
@@ -86,7 +88,8 @@ public class MainClient {
     }
 
     /**
-     * Select the size of the key, taking into account the algorithm chosen.
+     * Method that allows the user to Select the size of the key, taking into account the algorithm chosen.
+     *
      * @param encryption_choice encryption algorithm chosen
      * @return size of the key selected
      */
@@ -140,7 +143,8 @@ public class MainClient {
     }
 
     /**
-     * Allows the user to chose the hashs algorithm.
+     * Method that Allows the user to chose the hashs algorithm.
+     *
      * @return hash chosen.
      */
     public static String hashChoice( Scanner usrInput)
@@ -159,7 +163,8 @@ public class MainClient {
     }
 
     /**
-     * Allows user to chose the key exchange algorithm
+     * Method that Allows the user to chose the key exchange algorithm.
+     *
      * @return key exchange selected
      */
     public static String keyExchangeChoice(Scanner usrInput)
