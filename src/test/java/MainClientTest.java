@@ -17,6 +17,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class responsible with the testing of multiple classes and methods
+ */
 class MainClientTest {
 
     public void detectInputOutput(String userInput)
@@ -28,10 +31,17 @@ class MainClientTest {
         PrintStream printStream = new PrintStream(baos);
         System.setOut(printStream);
     }
+
+    /**
+     * Class responsible for the different type of choices which utilizes mostly scanners
+     */
     @Nested
     @DisplayName("Client choices' tests")
     class ChoiceTests
     {
+        /**
+         * Method responsible for the Input from the user regarding the Username
+         */
         @DisplayName ("Test username choice")
         @Test
         public void testUsernameChoice() {
@@ -40,7 +50,6 @@ class MainClientTest {
             Scanner scanner = new Scanner(userInput);
 
             String userNameOutput = MainClient.usernameChoice(scanner); // call the username choice method
-
 
             String userInput2 = String.format("%stest%s",
                     System.lineSeparator(),
@@ -56,6 +65,9 @@ class MainClientTest {
             );
         }
 
+        /**
+         * Method responsible for the choice of Input from the user regarding the Encryption Type.
+         */
         @DisplayName ("Test encryption choice")
         @Test
         public void testEncryptionChoice() {
@@ -82,6 +94,9 @@ class MainClientTest {
             );
         }
 
+        /**
+         * This method is responsible for the choice of the key size.
+         */
         @DisplayName ("Test key size choice")
         @Test
         public void testKeySizeChoice() {
@@ -116,6 +131,9 @@ class MainClientTest {
             );
         }
 
+        /**
+         * This method is responsible for the Hash choice by utilizing Scanners.
+         */
         @DisplayName ("Test hash choice")
         @Test
         public void testHashChoice() {
@@ -140,6 +158,9 @@ class MainClientTest {
             );
         }
 
+        /**
+         * This method is responsible for the key Exchange choice
+         */
         @DisplayName ("Test key exchange choice")
         @Test
         public void testKeyExchangeChoice() {
@@ -164,6 +185,11 @@ class MainClientTest {
             );
         }
 
+        /**
+         * Method responsible to test all the Client's Choices
+         *
+         * @throws Exception
+         */
         @DisplayName ("Test all client choices")
         @Test
         public void testClientChoices() throws Exception {
@@ -207,10 +233,16 @@ class MainClientTest {
         }
     }
 
+    /**
+     * Class responsible for the DH Numbers generators tests
+     */
     @Nested
     @DisplayName("DHNumberGenerator Tests")
     class DHNumberGeneratorTests
     {
+        /**
+         * Method responsible for the testing that involves the DH Numbers
+         */
         @DisplayName ("Test DHNumbers")
         @Test
         public void testDHNumber() {
@@ -241,6 +273,9 @@ class MainClientTest {
         }
     }
 
+    /**
+     * Class that will tests everything that involves the DiffielHellman and the key exchanges.
+     */
     @Nested
     @DisplayName("DiffieHellman Tests")
     class DiffieHellmanTests
@@ -263,10 +298,19 @@ class MainClientTest {
         }
     }
 
+    /**
+     * Class that tests the involvement of the ECDiffielHellman
+     */
     @Nested
     @DisplayName("ECDiffieHellman Tests")
     class ECDiffieHellmanTests
     {
+        /**
+         * ECDiffieHellman Method
+         *
+         * @throws NoSuchAlgorithmException
+         * @throws InvalidKeyException
+         */
         @DisplayName ("Test ECDiffieHellman")
         @Test
         public void testECDH() throws NoSuchAlgorithmException, InvalidKeyException {
@@ -293,10 +337,23 @@ class MainClientTest {
         }
     }
 
+    /**
+     * This class will be responsible for the Hash based message authentication code
+     */
     @Nested
     @DisplayName("HMac Tests")
     class HMacTests
     {
+        /**
+         * Method responsible for the specified HMAC test in order for both parties to communicate, and their connection to remain private.
+         *
+         * @throws NoSuchAlgorithmException
+         * @throws InvalidKeyException
+         * @throws NoSuchPaddingException
+         * @throws IllegalBlockSizeException
+         * @throws BadPaddingException
+         * @throws IOException
+         */
         @DisplayName ("Test HMac")
         @Test
         public void testHMac()
@@ -322,10 +379,22 @@ class MainClientTest {
         }
     }
 
+    /**
+     * Class responsible for the RSA Protocol Testing
+     */
     @Nested
     @DisplayName("RSA Tests")
     class RSATests
     {
+        /**
+         * Method responsible for the RSA testing, involving the utilization of both Public and Private Keys
+         *
+         * @throws NoSuchAlgorithmException
+         * @throws NoSuchPaddingException
+         * @throws IllegalBlockSizeException
+         * @throws BadPaddingException
+         * @throws InvalidKeyException
+         */
         @DisplayName ("Test RSA")
         @Test
         public void testRSA() throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
@@ -356,10 +425,23 @@ class MainClientTest {
         }
     }
 
+    /**
+     * This class is responsible for the Symmetric Algorithms Tests.
+     */
     @Nested
     @DisplayName("SymmetricAlgorithm Tests")
     class SymmetricAlgorithmTests
     {
+        /**
+         * This method is responsible for the encryption and decryption of the specified messages, utilizing the Symmmetric Algorithms.
+         *
+         * @throws NoSuchAlgorithmException
+         * @throws NoSuchPaddingException
+         * @throws IllegalBlockSizeException
+         * @throws BadPaddingException
+         * @throws IOException
+         * @throws InvalidKeyException
+         */
         @DisplayName ("Test SymmetricAlgorithm")
         @Test
         public void testSymmetricAlgorithm() throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeyException {
@@ -385,6 +467,9 @@ class MainClientTest {
         }
     }
 
+    /**
+     * This class will test everything that involves the Testing arround the Client-side Messages.
+     */
     @Nested
     @DisplayName("Message Test")
     class MessageClientTests
@@ -395,6 +480,11 @@ class MainClientTest {
             MainServer.main(new String[0]);
         }
 
+        /**
+         * Method responsible for the Messages that involves the Clients.
+         *
+         * @throws Exception
+         */
         @DisplayName ("Test messages sent and received")
         @Test
         public void testMessagesClient() throws Exception {
