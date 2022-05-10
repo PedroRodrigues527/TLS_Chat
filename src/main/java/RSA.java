@@ -5,6 +5,9 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.*;
 import java.util.ArrayList;
 
+/**
+ * This class will be responsible for the implementation of the RSA Protocol.
+ */
 public class RSA {
 
     /**

@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Scanner;
 
+/**
+ * Client class will be responsible for mostly everything the will represent the client-side.
+ */
 public class Client {
     //variáveis de instância
     private final Socket client;
@@ -33,6 +36,8 @@ public class Client {
     private PublicKey publicServerKey;
 
     /**
+     * The Client Construtor is used to initialize the objects first mentioned in the class and also send and receive the hello and OK handshake.
+     *
      * @param host ip address where server is online
      * @param port network port where server is online
      * @param userName username chosen by the user
