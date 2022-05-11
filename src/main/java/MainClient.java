@@ -2,6 +2,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Class responsible for getting user preferences,
+ * and instance client with those preferences.
+ */
 public class MainClient {
 
     /**
