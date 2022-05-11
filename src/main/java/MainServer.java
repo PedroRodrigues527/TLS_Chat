@@ -1,5 +1,8 @@
 import java.io.IOException;
 
+/**
+ * Class responsible for initialize the Server
+ */
 public class MainServer {
     /**
      * Main server method, initialize server
