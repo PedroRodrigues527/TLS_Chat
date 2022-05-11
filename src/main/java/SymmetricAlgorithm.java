@@ -10,13 +10,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * Class responsible for the implementation of the symmetric Algorithm
+ */
 public class SymmetricAlgorithm {
 
     private static final int ENCRYPT_MODE = 1;
     private static final int DECRYPT_MODE = 2;
 
     /**
-     * Encrypts message
+     * Method responsible for the Encryption of the specified message, key and algorithm.
+     *
      * @param text content to be encrypted
      * @param key key encode content
      * @param algorithm algorithm that user chose
@@ -43,7 +47,8 @@ public class SymmetricAlgorithm {
     }
 
     /**
-     * Decrypts message
+     * Method responsible for the Decryption of the specified message, key and algorithm.
+     *
      * @param text content to be decrypted
      * @param key key decode content
      * @param algorithm algorithm that user chose
@@ -71,6 +76,8 @@ public class SymmetricAlgorithm {
     }
 
     /**
+     * Method responsible for the implementation of the Split text.
+     *
      * @param text encrypted
      * @param blockSize size of the block
      * @param mode mode (encrypt mode or decrypted mode)
@@ -107,7 +114,8 @@ public class SymmetricAlgorithm {
     }
 
     /**
-     * Generates symmetric key
+     * Method responsible for the Generation of a symmetric key
+     *
      * @param sizeKey size of the key
      * @param algorithm algorithm in use
      * @return FALTA VER

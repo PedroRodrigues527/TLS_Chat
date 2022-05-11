@@ -1,8 +1,16 @@
 import java.util.*;
 
+/**
+ * Class responsible for the methods that involve the generations of prime numbers
+ */
 //FONTE: https://www.geeksforgeeks.org/primitive-root-of-a-prime-number-n-modulo-n/
 public class DHNumberGenerator {
 
+    /**
+     * Method responsible for the generation of the Prime numbers
+     *
+     * @return
+     */
     //FONTE: https://www.baeldung.com/java-generate-prime-numbers
     public static int generateP() {
         int n = 300;
@@ -26,6 +34,12 @@ public class DHNumberGenerator {
         return primeNumbers.get(rand.nextInt(primeNumbers.size()));
     }
 
+    /**
+     * Method responsible for the verification if the number is Prime or not, will return a boolean.
+     *
+     * @param n
+     * @return
+     */
     // Returns true if n is prime
     public static boolean isPrime(int n)
     {
@@ -57,6 +71,14 @@ public class DHNumberGenerator {
         return true;
     }
 
+    /**
+     * Method that complements the calculation of DiffieHellman
+     *
+     * @param x
+     * @param y
+     * @param p
+     * @return
+     */
     /* Iterative Function to calculate (x^n)%p in
     O(logy) */
     public static int power(int x, int y, int p)
@@ -81,6 +103,12 @@ public class DHNumberGenerator {
         return res;
     }
 
+    /**
+     * Method that allows the finding of Prime factors.
+     *
+     * @param s
+     * @param n
+     */
     // Utility function to store prime factors of a number
     public static void findPrimefactors(HashSet<Integer> s, int n)
     {
@@ -111,6 +139,12 @@ public class DHNumberGenerator {
         }
     }
 
+    /**
+     * Method that creates a value of module to the primitive root of n with basis on DiffieHellman.
+     *
+     * @param n
+     * @return
+     */
     // Function to find smallest primitive root of n
     public static int generateG(int n)
     {
