@@ -525,56 +525,106 @@ class MainClientTest {
                     System.lineSeparator());
 
             Scanner scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos0 = new ByteArrayOutputStream();
+            PrintStream printStream0 = new PrintStream(baos0);
+            System.setOut(printStream0);
             client0.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+            PrintStream printStream1 = new PrintStream(baos1);
+            System.setOut(printStream1);
             client1.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+            PrintStream printStream2 = new PrintStream(baos2);
+            System.setOut(printStream2);
             client2.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos3 = new ByteArrayOutputStream();
+            PrintStream printStream3 = new PrintStream(baos3);
+            System.setOut(printStream3);
             client3.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos4 = new ByteArrayOutputStream();
+            PrintStream printStream4 = new PrintStream(baos4);
+            System.setOut(printStream4);
             client4.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos5 = new ByteArrayOutputStream();
+            PrintStream printStream5 = new PrintStream(baos5);
+            System.setOut(printStream5);
             client5.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos6 = new ByteArrayOutputStream();
+            PrintStream printStream6 = new PrintStream(baos6);
+            System.setOut(printStream6);
             client6.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos7 = new ByteArrayOutputStream();
+            PrintStream printStream7 = new PrintStream(baos7);
+            System.setOut(printStream7);
             client7.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos8 = new ByteArrayOutputStream();
+            PrintStream printStream8 = new PrintStream(baos8);
+            System.setOut(printStream8);
             client8.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos9 = new ByteArrayOutputStream();
+            PrintStream printStream9 = new PrintStream(baos9);
+            System.setOut(printStream9);
             client9.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos10 = new ByteArrayOutputStream();
+            PrintStream printStream10 = new PrintStream(baos10);
+            System.setOut(printStream10);
             client10.sendMessages(scanner);
             Thread.sleep(2000);
             scanner = new Scanner(userInputtest);
+            ByteArrayOutputStream baos11 = new ByteArrayOutputStream();
+            PrintStream printStream11 = new PrintStream(baos11);
+            System.setOut(printStream11);
             client11.sendMessages(scanner);
             Thread.sleep(2000);
 
             // checkout values
             assertAll(
+                    () -> assertEquals("muser0",client0.getUserName()),
+                    () -> assertEquals("AES",client0.getEncryptionUser()),
+                    () -> assertEquals(128,client0.getKeySizeUser()),
+                    () -> assertEquals("none",client0.getHashUser()),
+                    () -> assertEquals("none",client0.getKeyExchangeUser()),
+                    () -> assertTrue(baos0.toString().contains("muser0: message")),
+                    () -> assertTrue(baos0.toString().contains("muser0: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos0.toString().contains("Exiting Chat..."))
+            )
+            ;assertAll(
                     () -> assertEquals("user1",client1.getUserName()),
                     () -> assertEquals("AES",client1.getEncryptionUser()),
                     () -> assertEquals(256,client1.getKeySizeUser()),
                     () -> assertEquals("MD5",client1.getHashUser()),
-                    () -> assertEquals("DH",client1.getKeyExchangeUser())
+                    () -> assertEquals("DH",client1.getKeyExchangeUser()),
+                    () -> assertTrue(baos1.toString().contains("user1: message")),
+                    () -> assertTrue(baos1.toString().contains("user1: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos1.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("user2",client2.getUserName()),
                     () -> assertEquals("AES",client2.getEncryptionUser()),
                     () -> assertEquals(256,client2.getKeySizeUser()),
                     () -> assertEquals("SHA256",client2.getHashUser()),
-                    () -> assertEquals("ECDH",client2.getKeyExchangeUser())
+                    () -> assertEquals("ECDH",client2.getKeyExchangeUser()),
+                    () -> assertTrue(baos1.toString().contains("user1: message"))
             )
             ;assertAll(
                     () -> assertEquals("user3",client3.getUserName()),
