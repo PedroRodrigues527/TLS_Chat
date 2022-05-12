@@ -655,7 +655,10 @@ class MainClientTest {
                     () -> assertEquals("DES",client5.getEncryptionUser()),
                     () -> assertEquals(56,client5.getKeySizeUser()),
                     () -> assertEquals("SHA512",client5.getHashUser()),
-                    () -> assertEquals("ECDH",client5.getKeyExchangeUser())
+                    () -> assertEquals("ECDH",client5.getKeyExchangeUser()),
+                    () -> assertTrue(baos5.toString().contains("user5: message")),
+                    () -> assertTrue(baos5.toString().contains("user5: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos5.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("user6",client6.getUserName()),
