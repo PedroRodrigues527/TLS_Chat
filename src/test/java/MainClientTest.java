@@ -717,8 +717,8 @@ class MainClientTest {
                     () -> assertEquals(2048,client11.getKeySizeUser()),
                     () -> assertEquals("SHA256",client11.getHashUser()),
                     () -> assertEquals("none",client11.getKeyExchangeUser()),
-                    () -> assertTrue(baos11.toString().contains("user11: message")),
-                    () -> assertTrue(baos11.toString().contains("user11: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertFalse(baos11.toString().contains("user11: message")),
+                    () -> assertFalse(baos11.toString().contains("user11: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
                     () -> assertTrue(baos11.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
