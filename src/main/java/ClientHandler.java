@@ -292,7 +292,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     *
+     * Method responsible for the execution of the Server
      */
     @Override
     public void run () {
