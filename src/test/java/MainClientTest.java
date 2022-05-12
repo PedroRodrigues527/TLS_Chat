@@ -677,6 +677,9 @@ class MainClientTest {
                     () -> assertEquals(3*56,client7.getKeySizeUser()),
                     () -> assertEquals("MD5",client7.getHashUser()),
                     () -> assertEquals("DH",client7.getKeyExchangeUser())
+                    () -> assertTrue(baos7.toString().contains("user7: message")),
+                    () -> assertTrue(baos7.toString().contains("user7: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos7.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("user8",client8.getUserName()),
@@ -684,6 +687,9 @@ class MainClientTest {
                     () -> assertEquals(3*56,client8.getKeySizeUser()),
                     () -> assertEquals("SHA512",client8.getHashUser()),
                     () -> assertEquals("ECDH",client8.getKeyExchangeUser())
+                    () -> assertTrue(baos8.toString().contains("user8: message")),
+                    () -> assertTrue(baos8.toString().contains("user8: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos8.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("user9",client9.getUserName()),
@@ -691,6 +697,9 @@ class MainClientTest {
                     () -> assertEquals(3*56,client9.getKeySizeUser()),
                     () -> assertEquals("none",client9.getHashUser()),
                     () -> assertEquals("none",client9.getKeyExchangeUser())
+                    () -> assertTrue(baos9.toString().contains("user9: message")),
+                    () -> assertTrue(baos9.toString().contains("user9: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos9.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("user10",client10.getUserName()),
@@ -698,6 +707,9 @@ class MainClientTest {
                     () -> assertEquals(1024,client10.getKeySizeUser()),
                     () -> assertEquals("none",client10.getHashUser()),
                     () -> assertEquals("none",client10.getKeyExchangeUser())
+                    () -> assertTrue(baos10.toString().contains("user10: message")),
+                    () -> assertTrue(baos10.toString().contains("user10: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos10.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("user11",client11.getUserName()),
@@ -705,6 +717,9 @@ class MainClientTest {
                     () -> assertEquals(2048,client11.getKeySizeUser()),
                     () -> assertEquals("SHA256",client11.getHashUser()),
                     () -> assertEquals("none",client11.getKeyExchangeUser())
+                    () -> assertTrue(baos11.toString().contains("user11: message")),
+                    () -> assertTrue(baos11.toString().contains("user11: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos11.toString().contains("Exiting Chat..."))
             )
             ;assertAll(
                     () -> assertEquals("muser0",client0.getUserName()),
@@ -712,6 +727,9 @@ class MainClientTest {
                     () -> assertEquals(128,client0.getKeySizeUser()),
                     () -> assertEquals("none",client0.getHashUser()),
                     () -> assertEquals("none",client0.getKeyExchangeUser())
+                    () -> assertTrue(baos0.toString().contains("muser0: message")),
+                    () -> assertTrue(baos0.toString().contains("muser0: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos0.toString().contains("Exiting Chat..."))
             );
         }
 
