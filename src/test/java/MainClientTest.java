@@ -618,12 +618,17 @@ class MainClientTest {
                     () -> assertTrue(baos1.toString().contains("user1: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
                     () -> assertTrue(baos1.toString().contains("Exiting Chat..."))
             )
+            //*******
             ;assertAll(
                     () -> assertEquals("user2",client2.getUserName()),
                     () -> assertEquals("AES",client2.getEncryptionUser()),
                     () -> assertEquals(256,client2.getKeySizeUser()),
                     () -> assertEquals("SHA256",client2.getHashUser()),
-                    () -> assertEquals("ECDH",client2.getKeyExchangeUser())
+                    () -> assertEquals("ECDH",client2.getKeyExchangeUser()),
+                    () -> assertTrue(baos2.toString().contains("user2: message")),
+                    () -> assertTrue(baos2.toString().contains("user2: @user1,@user2,@user3,@user4,@user5,@user6,@user7,@user8,@user9,@user10,@user11 specificMessage")),
+                    () -> assertTrue(baos2.toString().contains("Exiting Chat..."))
+
             )
             ;assertAll(
                     () -> assertEquals("user3",client3.getUserName()),
@@ -653,6 +658,7 @@ class MainClientTest {
                     () -> assertEquals("none",client6.getHashUser()),
                     () -> assertEquals("none",client6.getKeyExchangeUser())
             )
+            //6
             ;assertAll(
                     () -> assertEquals("user7",client7.getUserName()),
                     () -> assertEquals("TripleDES",client7.getEncryptionUser()),
