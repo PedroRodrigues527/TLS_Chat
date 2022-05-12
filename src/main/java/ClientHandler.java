@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * Thread of server. Responsable for management of server functionalities.
+ * Like, 'TLS' protocol (generates keys, agreed on user security specifications, handshake protocol ),
+ * send specific message or broadcast
+ */
 public class ClientHandler implements Runnable {
 
     public static final ArrayList<ClientHandler> clientHandlers = new ArrayList<>( );
@@ -504,11 +509,11 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * @see <a href=" https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string" </a>
      * @param str
      * @param target
      * @return
      */
-    //FONTE: https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string
     public static int countChar( String str, String target ) {
         return ( str.length() - str.replace( target, "" ).length( ) ) / target.length( );
     }

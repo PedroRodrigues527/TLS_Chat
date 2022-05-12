@@ -259,8 +259,8 @@ public class Client {
     /**
      * Method responsible with the return of the decrypted Message utilizing the Encryption protocols.
      *
-     * @param decryptedMessage
-     * @param encryptedMessage
+     * @param decryptedMessage byte array decrypted message recieved
+     * @param encryptedMessage byte array encrypted message to send
      * @return
      * @throws NoSuchPaddingException
      * @throws IllegalBlockSizeException
