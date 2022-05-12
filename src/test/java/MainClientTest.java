@@ -623,8 +623,7 @@ class MainClientTest {
                     () -> assertEquals("AES",client2.getEncryptionUser()),
                     () -> assertEquals(256,client2.getKeySizeUser()),
                     () -> assertEquals("SHA256",client2.getHashUser()),
-                    () -> assertEquals("ECDH",client2.getKeyExchangeUser()),
-                    () -> assertTrue(baos1.toString().contains("user1: message"))
+                    () -> assertEquals("ECDH",client2.getKeyExchangeUser())
             )
             ;assertAll(
                     () -> assertEquals("user3",client3.getUserName()),
