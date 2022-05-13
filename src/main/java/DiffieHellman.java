@@ -11,9 +11,9 @@ public class DiffieHellman {
     /**
      * Method that creates a DiffieHellman Public Key
      *
-     * @param G
-     * @param N
-     * @param privateKey
+     * @param G Specified Integer that prevents Overflow
+     * @param N Specified Integer that prevents Overflow
+     * @param privateKey Specified Integer for the Private key that prevents Overflow
      * @return
      */
     public static BigInteger generatePublicKey ( BigInteger G, BigInteger N, BigInteger privateKey ) {
@@ -23,9 +23,9 @@ public class DiffieHellman {
     /**
      * Method that creates a DiffieHellman Private Key
      *
-     * @param N
-     * @param publicKey
-     * @param privateKey
+     * @param N Specified Integer that prevents Overflow
+     * @param publicKey Specified Integer for public key that prevents Overflow
+     * @param privateKey Specified Integer for private key that prevents Overflow
      * @return
      */
     public static BigInteger generateSecretKey ( BigInteger N, BigInteger publicKey , BigInteger privateKey ) {
