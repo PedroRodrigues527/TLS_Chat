@@ -509,7 +509,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
-     * @see <a href="https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string"></a>
+     * @see <a href="https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string">Occurences of substrings in a string</a>
      * @param str String that receives the input proposed for the specified parameter.
      * @param target String that receives the target input
      * @return
