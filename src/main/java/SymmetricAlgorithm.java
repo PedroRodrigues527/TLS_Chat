@@ -21,7 +21,7 @@ public class SymmetricAlgorithm {
     /**
      * Method responsible for the Encryption of the specified message, key and algorithm.
      *
-     * @param text content to be encrypted
+     * @param text Array of byte type in which the specified content is to be encrypted
      * @param key key encode content
      * @param algorithm algorithm that user chose
      * @return sent message encrypted in bytes
@@ -49,7 +49,7 @@ public class SymmetricAlgorithm {
     /**
      * Method responsible for the Decryption of the specified message, key and algorithm.
      *
-     * @param text content to be decrypted
+     * @param text Array of byte type in which the specified content is to be decrypted
      * @param key key decode content
      * @param algorithm algorithm that user chose
      * @return FALTA VER ISTO
@@ -78,7 +78,7 @@ public class SymmetricAlgorithm {
     /**
      * Method responsible for the implementation of the Split text.
      *
-     * @param text encrypted
+     * @param text Array of byte type in which the specified content is to be encrypted
      * @param blockSize size of the block
      * @param mode mode (encrypt mode or decrypted mode)
      * @return text divided
@@ -118,7 +118,7 @@ public class SymmetricAlgorithm {
      *
      * @param sizeKey size of the key
      * @param algorithm algorithm in use
-     * @return FALTA VER
+     * @return symmetric key encoded
      * @throws NoSuchAlgorithmException
      */
     public String generateKey(int sizeKey, String algorithm) throws NoSuchAlgorithmException {

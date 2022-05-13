@@ -12,7 +12,7 @@ public class Server implements Runnable {
     /**
      * Implementation of the Server Constructor
      *
-     * @param port
+     * @param port Will receive the specified port Integer
      * @throws IOException
      */
     public Server ( int port ) throws IOException {
