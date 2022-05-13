@@ -23,7 +23,7 @@ public class ECDiffieHellman {
     /**
      * Getter for Public key
      *
-     * @param kp
+     * @param kp value for KeyPair is received
      * @return
      */
     public PublicKey getPublicKey(KeyPair kp)
@@ -34,7 +34,7 @@ public class ECDiffieHellman {
     /**
      * Getter for Private key
      *
-     * @param kp
+     * @param kp value for KeyPair is received
      * @return
      */
     public PrivateKey getPrivateKey(KeyPair kp)
@@ -45,8 +45,8 @@ public class ECDiffieHellman {
     /**
      * Method on the receiver-end for the Secret Key.
      *
-     * @param privateKey
-     * @param otherPublicKey
+     * @param privateKey Value attributed for the private key
+     * @param otherPublicKey value for PublicKey is received
      * @return
      * @throws InvalidKeyException
      * @throws NoSuchAlgorithmException
