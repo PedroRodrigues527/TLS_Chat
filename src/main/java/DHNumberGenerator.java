@@ -37,7 +37,7 @@ public class DHNumberGenerator {
     /**
      * Method responsible for the verification if the number is Prime or not, will return a boolean.
      *
-     * @param n
+     * @param n Specified number for prime verification.
      * @return
      */
     // Returns true if n is prime
@@ -74,9 +74,9 @@ public class DHNumberGenerator {
     /**
      * Method that complements the calculation of DiffieHellman
      *
-     * @param x
-     * @param y
-     * @param p
+     * @param x Specified number for iterative function
+     * @param y Specified number for iterative function
+     * @param p Specified number for iterative function
      * @return
      */
     /* Iterative Function to calculate (x^n)%p in
@@ -106,8 +106,8 @@ public class DHNumberGenerator {
     /**
      * Method that allows the finding of Prime factors.
      *
-     * @param s
-     * @param n
+     * @param s is an element that will be stored in the HashSet that accepts the Integer
+     * @param n Specified number that will be used for the verification of the Prime Factors
      */
     // Utility function to store prime factors of a number
     public static void findPrimefactors(HashSet<Integer> s, int n)
@@ -142,7 +142,7 @@ public class DHNumberGenerator {
     /**
      * Method that creates a value of module to the primitive root of n with basis on DiffieHellman.
      *
-     * @param n
+     * @param n Integer utilized to find the primitive root of it-self.
      * @return
      */
     // Function to find smallest primitive root of n
