@@ -224,11 +224,11 @@ public class ClientHandler implements Runnable {
     /**
      * Method responsible for the OK Message on the sender end, in order to ensure the safety of the Message.
      *
-     * @param isSymmetric
-     * @param hashAlgo
-     * @param messageDecryptS
-     * @param hmacHash
-     * @param decryptedMessageReceivedOK
+     * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
+     * @param hashAlgo String that stores the Hash that involves the Algorithm
+     * @param messageDecryptS message content that is decrypted on the input-side.
+     * @param hmacHash Hash Responsible for the decryption/encryption process.
+     * @param decryptedMessageReceivedOK array of bytes that stores the Decrypted Message for the OK-end.
      * @throws Exception
      */
     public void OkHandShakeSend(boolean isSymmetric , String hashAlgo , String messageDecryptS , byte[] hmacHash , byte[] decryptedMessageReceivedOK ) throws Exception {
@@ -510,8 +510,8 @@ public class ClientHandler implements Runnable {
 
     /**
      * @see <a href="https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string"></a>
-     * @param str
-     * @param target
+     * @param str String that receives the input proposed for the specified parameter.
+     * @param target String that receives the target input
      * @return
      */
     public static int countChar( String str, String target ) {

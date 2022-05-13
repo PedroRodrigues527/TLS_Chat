@@ -282,7 +282,7 @@ public class Client {
 
     /**
      * Send messages as long as the client is connected and also uses encrpytion protocols in order to maintain the security of the message's context
-     *
+     * @param usrInput Scanner that allows input from the user-side
      * @throws IOException
      */
     public void sendMessages ( Scanner usrInput ) throws IOException {
