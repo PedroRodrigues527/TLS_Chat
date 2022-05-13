@@ -11,9 +11,9 @@ public class HMac {
     /**
      * Method that implements the Hashed Message Authentication Code based on Java
      *
-     * @param algorithm
-     * @param data
-     * @param key
+     * @param algorithm String with specified algorithm input
+     * @param data String with specified data input
+     * @param key String with specified key input
      * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeyException

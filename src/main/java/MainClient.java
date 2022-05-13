@@ -13,7 +13,7 @@ public class MainClient {
      *      Username, Encryption algorithm, key size, hash algorithm.
      * And initializes the Client.
      *
-     * @param args
+     * @param args Array of Strings that stores the specified argument
      * @throws Exception
      */
     public static void main ( String[] args ) throws Exception {
@@ -53,6 +53,7 @@ public class MainClient {
     /**
      * Method that will Retrieve the username written by the user
      *
+     * @param usrInput Scanner that allows input from the user-side
      * @return username chosen
      */
     public static String usernameChoice(Scanner usrInput)
@@ -73,6 +74,7 @@ public class MainClient {
     /**
      * Method that will Retrieve the encryption choice written by the user
      *
+     * @param usrInput Scanner that allows input from the user-side
      * @return Encryption algorithm chosen
      */
     public static String encryptionChoice(Scanner usrInput)
@@ -95,6 +97,7 @@ public class MainClient {
      * Method that allows the user to Select the size of the key, taking into account the algorithm chosen.
      *
      * @param encryption_choice encryption algorithm chosen
+     * @param usrInput Scanner that allows input from the user-side
      * @return size of the key selected
      */
     public static int keySizeChoice( String encryption_choice, Scanner usrInput )
@@ -149,6 +152,7 @@ public class MainClient {
     /**
      * Method that Allows the user to chose the hashs algorithm.
      *
+     * @param usrInput Scanner that allows input from the user-side
      * @return hash chosen.
      */
     public static String hashChoice( Scanner usrInput)
@@ -169,6 +173,7 @@ public class MainClient {
     /**
      * Method that Allows the user to chose the key exchange algorithm.
      *
+     * @param usrInput Scanner that allows input from the user-side
      * @return key exchange selected
      */
     public static String keyExchangeChoice(Scanner usrInput)
