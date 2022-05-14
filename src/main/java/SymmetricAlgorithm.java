@@ -25,12 +25,6 @@ public class SymmetricAlgorithm {
      * @param key key encode content
      * @param algorithm algorithm that user chose
      * @return sent message encrypted in bytes
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws IOException
      */
     public static byte[] encrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( algorithm );
@@ -52,13 +46,7 @@ public class SymmetricAlgorithm {
      * @param text Array of byte type in which the specified content is to be decrypted
      * @param key key decode content
      * @param algorithm algorithm that user chose
-     * @return FALTA VER ISTO
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws IOException
+     * @return sent message decrypted in bytes
      */
     public static byte[] decrypt ( byte[] text , String key, String algorithm ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         Cipher cipher = Cipher.getInstance( algorithm );
@@ -82,7 +70,6 @@ public class SymmetricAlgorithm {
      * @param blockSize size of the block
      * @param mode mode (encrypt mode or decrypted mode)
      * @return text divided
-     * @throws IOException
      */
     private static ArrayList<byte[]> splitText ( byte[] text , int blockSize , int mode ) throws IOException {
         ArrayList<byte[]> textSplits = new ArrayList<>( );
@@ -119,7 +106,6 @@ public class SymmetricAlgorithm {
      * @param sizeKey size of the key
      * @param algorithm algorithm in use
      * @return symmetric key encoded
-     * @throws NoSuchAlgorithmException
      */
     public String generateKey(int sizeKey, String algorithm) throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance( algorithm );

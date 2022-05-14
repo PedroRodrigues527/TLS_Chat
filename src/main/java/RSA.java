@@ -15,7 +15,6 @@ public class RSA {
      *
      * @param sizeKey size of the key selected
      * @return arraylist that contains public and private key
-     * @throws NoSuchAlgorithmException
      */
     public ArrayList<Object> generateKeyPair(int sizeKey) throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance( "RSA" );
@@ -34,12 +33,7 @@ public class RSA {
      *
      * @param message message to be encrypted
      * @param publicKey key to encrypt content
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
+     * @return specified encrypted message
      */
     public static byte[] encrypt ( byte[] message, PublicKey publicKey ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance( "RSA" );

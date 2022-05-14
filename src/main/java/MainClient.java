@@ -14,7 +14,6 @@ public class MainClient {
      * And initializes the Client.
      *
      * @param args Array of Strings that stores the specified argument
-     * @throws Exception
      */
     public static void main ( String[] args ) throws Exception {
         String userName, encryptionUser, hashUser, keyExchangeUser;

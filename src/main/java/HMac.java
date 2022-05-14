@@ -14,9 +14,7 @@ public class HMac {
      * @param algorithm String with specified algorithm input
      * @param data String with specified data input
      * @param key String with specified key input
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
+     * @return the instance of the specified algorithm
      */
     //FONTE: https://www.baeldung.com/java-hmac
     public static byte[] hmacWithJava(String algorithm, String data, String key)
