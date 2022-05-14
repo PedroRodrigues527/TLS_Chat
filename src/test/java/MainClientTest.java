@@ -21,17 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Class responsible with the testing of multiple classes and methods
  */
 class MainClientTest {
-
-    public void detectInputOutput(String userInput)
-    {
-        ByteArrayInputStream bais = new ByteArrayInputStream(userInput.getBytes());
-        System.setIn(bais);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(baos);
-        System.setOut(printStream);
-    }
-
     /**
      * Class responsible for the different type of choices which utilizes mostly scanners
      */
