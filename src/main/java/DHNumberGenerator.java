@@ -9,7 +9,7 @@ public class DHNumberGenerator {
     /**
      * Method responsible for the generation of the Prime numbers
      *
-     * @return
+     * @return prime number
      */
     //FONTE: https://www.baeldung.com/java-generate-prime-numbers
     public static int generateP() {
@@ -38,7 +38,7 @@ public class DHNumberGenerator {
      * Method responsible for the verification if the number is Prime or not, will return a boolean.
      *
      * @param n Specified number for prime verification.
-     * @return
+     * @return boolean for specified number
      */
     // Returns true if n is prime
     public static boolean isPrime(int n)
@@ -77,7 +77,7 @@ public class DHNumberGenerator {
      * @param x Specified number for iterative function
      * @param y Specified number for iterative function
      * @param p Specified number for iterative function
-     * @return
+     * @return the result
      */
     /* Iterative Function to calculate (x^n)%p in
     O(logy) */
@@ -143,7 +143,7 @@ public class DHNumberGenerator {
      * Method that creates a value of module to the primitive root of n with basis on DiffieHellman.
      *
      * @param n Integer utilized to find the primitive root of it-self.
-     * @return
+     * @return primitive root of n
      */
     // Function to find smallest primitive root of n
     public static int generateG(int n)

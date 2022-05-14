@@ -10,8 +10,7 @@ public class ECDiffieHellman {
     /**
      * Method responsible for the pair of keys creation
      *
-     * @return
-     * @throws NoSuchAlgorithmException
+     * @return pair of keys
      */
     public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
         // Generate ECDH keypair
@@ -24,7 +23,7 @@ public class ECDiffieHellman {
      * Getter for Public key
      *
      * @param kp value for KeyPair is received
-     * @return
+     * @return specified keys
      */
     public PublicKey getPublicKey(KeyPair kp)
     {
@@ -35,7 +34,7 @@ public class ECDiffieHellman {
      * Getter for Private key
      *
      * @param kp value for KeyPair is received
-     * @return
+     * @return specified key
      */
     public PrivateKey getPrivateKey(KeyPair kp)
     {
@@ -47,9 +46,7 @@ public class ECDiffieHellman {
      *
      * @param privateKey Value attributed for the private key
      * @param otherPublicKey value for PublicKey is received
-     * @return
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * @return Secret key
      */
     public byte[] getSecretKey(PrivateKey privateKey, PublicKey otherPublicKey) throws InvalidKeyException, NoSuchAlgorithmException {
         // Perform key agreement

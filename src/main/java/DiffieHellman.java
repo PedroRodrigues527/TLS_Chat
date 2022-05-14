@@ -14,7 +14,7 @@ public class DiffieHellman {
      * @param G Specified Integer that prevents Overflow
      * @param N Specified Integer that prevents Overflow
      * @param privateKey Specified Integer for the Private key that prevents Overflow
-     * @return
+     * @return public key of DiffieHellman
      */
     public static BigInteger generatePublicKey ( BigInteger G, BigInteger N, BigInteger privateKey ) {
         return G.modPow( privateKey , N );
@@ -26,7 +26,7 @@ public class DiffieHellman {
      * @param N Specified Integer that prevents Overflow
      * @param publicKey Specified Integer for public key that prevents Overflow
      * @param privateKey Specified Integer for private key that prevents Overflow
-     * @return
+     * @return private key of DiffieHellman
      */
     public static BigInteger generateSecretKey ( BigInteger N, BigInteger publicKey , BigInteger privateKey ) {
         return publicKey.modPow( privateKey , N );
