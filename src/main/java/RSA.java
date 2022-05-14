@@ -46,12 +46,7 @@ public class RSA {
      *
      * @param message message to be decrypted
      * @param privateKey key to decrypt message
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
+     * @return specified decrypted message of RSA
      */
     public static byte[] decrypt ( byte[] message , PrivateKey privateKey ) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance( "RSA" );
