@@ -173,7 +173,7 @@ public class ClientHandler implements Runnable {
      * the decryption done and the HMac received from the client.
      *
      * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
-     * @return
+     * @return the decrypted message and mostly possible received hash
      */
     public ArrayList<Object> OkHandShakeReceived(boolean isSymmetric) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException, ClassNotFoundException {
         byte[] decryptedMessageReceivedOK = new byte[0];
@@ -488,7 +488,7 @@ public class ClientHandler implements Runnable {
      * @see <a href="https://stackoverflow.com/questions/767759/occurrences-of-substring-in-a-string">Occurences of substrings in a string</a>
      * @param str String that receives the input proposed for the specified parameter.
      * @param target String that receives the target input
-     * @return
+     * @return the number of Occurences of substrings in a string
      */
     public static int countChar( String str, String target ) {
         return ( str.length() - str.replace( target, "" ).length( ) ) / target.length( );
