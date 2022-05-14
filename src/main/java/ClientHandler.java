@@ -45,7 +45,6 @@ public class ClientHandler implements Runnable {
      * Constructor that receives user information from socket and does
      * handshake protocol ( similar to TLS )
      * @param server server socket
-     * @throws Exception
      */
     public ClientHandler ( Socket server ) throws Exception {
         this.server = server;
@@ -84,10 +83,6 @@ public class ClientHandler implements Runnable {
      * Method responsible with a Parte of the'TLS' agreement between client and server.
      *
      * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     * @throws ClassNotFoundException
-     * @throws InvalidKeyException
      */
     public void helloHandShakeSend ( boolean isSymmetric ) throws IOException, NoSuchAlgorithmException, ClassNotFoundException, InvalidKeyException {
         if( isSymmetric )
@@ -179,13 +174,6 @@ public class ClientHandler implements Runnable {
      *
      * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
      * @return
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws ClassNotFoundException
      */
     public ArrayList<Object> OkHandShakeReceived(boolean isSymmetric) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException, ClassNotFoundException {
         byte[] decryptedMessageReceivedOK = new byte[0];
@@ -229,7 +217,6 @@ public class ClientHandler implements Runnable {
      * @param messageDecryptS message content that is decrypted on the input-side.
      * @param hmacHash Hash Responsible for the decryption/encryption process.
      * @param decryptedMessageReceivedOK array of bytes that stores the Decrypted Message for the OK-end.
-     * @throws Exception
      */
     public void OkHandShakeSend(boolean isSymmetric , String hashAlgo , String messageDecryptS , byte[] hmacHash , byte[] decryptedMessageReceivedOK ) throws Exception {
         if( messageDecryptS.equals( userName ) )
@@ -365,7 +352,6 @@ public class ClientHandler implements Runnable {
      * Method responsible with the Removal of the client.
      *
      * @param client client online
-     * @throws IOException
      */
     private void removeClient ( ClientHandler client ) throws IOException {
         clientHandlers.remove( client );
@@ -379,7 +365,6 @@ public class ClientHandler implements Runnable {
      *
      * @param message array of byte message received
      * @param isAnnouncement boolean to verify if is announcement
-     * @throws IOException
      */
     public void broadcastMessage ( byte[] message, boolean isAnnouncement ) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
@@ -412,7 +397,6 @@ public class ClientHandler implements Runnable {
      * This Method Sends a specific message to a user, by using @NAME_OF_THE_USER, where NAME_OF_THE_USER represents username of the user to send the message.
      *
      * @param message array of byte message received
-     * @throws IOException
      */
     public void specificMessage ( byte[] message ) throws IOException {
         for ( ClientHandler client : clientHandlers ) {
@@ -442,7 +426,6 @@ public class ClientHandler implements Runnable {
      * @param message array of byte message received
      * @param Client Clients connected
      * @param messageWithUsername Arraylist that contains message and username
-     * @throws IOException
      */
     public void checkAndSendToUsersSpecified (byte[] message , ClientHandler Client , ArrayList<Object> messageWithUsername) throws IOException {
         String message_verify = new String( message );
@@ -461,9 +444,7 @@ public class ClientHandler implements Runnable {
      *
      * @param message array of byte message received
      * @param client Client online
-     * @return hash created
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
+     * @return Hash
      */
     public byte[] generateHash (byte[] message , ClientHandler client ) throws NoSuchAlgorithmException, InvalidKeyException {
         byte[] hashCreated = new byte[0];
@@ -488,13 +469,8 @@ public class ClientHandler implements Runnable {
      * @param message array of byte message received
      * @param client client online
      * @return message encrypted
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws IOException
      */
+
     private byte[] serverEncryptionChoice(byte[] message, ClientHandler client) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
         byte[] messageEncrypted = new byte[0];
         if ( ( client.encUser ).equals( "AES" ) || ( client.encUser ).equals( "DES" ) || ( client.encUser ).equals( "TripleDES" ) )

@@ -45,7 +45,6 @@ public class Client {
      * @param keySizeUser size of the key selected by the user
      * @param hashUser hash algorithm selected by the user
      * @param keyExchangeUser key exchange chose by the user
-     * @throws Exception
      */
     public Client ( String host , int port , String userName, String encryptionUser, int keySizeUser, String hashUser, String keyExchangeUser ) throws Exception {
         client = new Socket( host , port );
@@ -74,7 +73,6 @@ public class Client {
     /**
      * Send to client handler user information and his choices
      *
-     * @throws IOException
      */
     public void helloHandShakeSend () throws IOException {
         ArrayList<Object> cipherSuite = new ArrayList<>(5);
@@ -88,11 +86,6 @@ public class Client {
 
     /**
      *Method responsible for the return of the Server_Hello, utilizing all the encryption methods and protocols.
-     *
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
      */
     public void helloHandShakeReceived () throws IOException, ClassNotFoundException, NoSuchAlgorithmException, InvalidKeyException {
         if ( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
@@ -168,12 +161,6 @@ public class Client {
     /**
      * Method responsible for the OK Message on the sender end, in order to ensure the safety of the Message.
      *
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws IOException
-     * @throws InvalidKeyException
      */
     public void okHandShakeSend ( ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
         byte[] encryptedUserName;
@@ -211,7 +198,6 @@ public class Client {
     /**
      * Method responsible for the OK Message on the receiver end, in order to ensure the safety of the Message.
      *
-     * @throws Exception
      */
     public void okHandShakeReceived ( ) throws Exception {
         if(hashUser.equals("none")) {
@@ -261,13 +247,7 @@ public class Client {
      *
      * @param decryptedMessage byte array decrypted message recieved
      * @param encryptedMessage byte array encrypted message to send
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws IOException
-     * @throws InvalidKeyException
+     * @return decrypted Message
      */
     public byte[] decryptMessageOkReceive ( byte[] decryptedMessage , byte[] encryptedMessage ) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeyException {
         if( encryptionUser.equals( "AES" ) || encryptionUser.equals( "DES" ) || encryptionUser.equals( "TripleDES" ) ) {
@@ -283,7 +263,6 @@ public class Client {
     /**
      * Send messages as long as the client is connected and also uses encrpytion protocols in order to maintain the security of the message's context
      * @param usrInput Scanner that allows input from the user-side
-     * @throws IOException
      */
     public void sendMessages ( Scanner usrInput ) throws IOException {
         while ( client.isConnected( ) ) {
@@ -408,7 +387,6 @@ public class Client {
     /**
      * Method that Closes the connection on the client side
      *
-     * @throws IOException
      */
     private void closeConnection () throws IOException {
         client.close( );
