@@ -3,7 +3,7 @@ import java.security.*;
 
 /**
  * Class responsible for the key Generator methods
- * @see <a href="https://neilmadden.blog/2016/05/20/ephemeral-elliptic-curve-diffie-hellman-key-agreement-in-java>Agreement between two parties without explicitly communicating that secret key</a>
+ * @see <a href="https://neilmadden.blog/2016/05/20/ephemeral-elliptic-curve-diffie-hellman-key-agreement-in-java">Agreement between two parties without explicitly communicating that secret key</a>
  */
 public class ECDiffieHellman {
 
