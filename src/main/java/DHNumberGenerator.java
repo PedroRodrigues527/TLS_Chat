@@ -2,8 +2,8 @@ import java.util.*;
 
 /**
  * Class responsible for the methods that involve the generations of prime numbers
+ * @see <a href="https://www.geeksforgeeks.org/primitive-root-of-a-prime-number-n-modulo-n/"><a>
  */
-//FONTE: https://www.geeksforgeeks.org/primitive-root-of-a-prime-number-n-modulo-n/
 public class DHNumberGenerator {
 
     /**
