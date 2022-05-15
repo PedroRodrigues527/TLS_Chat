@@ -7,11 +7,11 @@ import java.util.*;
 public class DHNumberGenerator {
 
     /**
+     *  * @see <a href="https://www.baeldung.com/java-generate-prime-numbers"> Method that generates prime number </a>
      * Method responsible for the generation of the Prime numbers
      *
      * @return prime number
      */
-    //FONTE: https://www.baeldung.com/java-generate-prime-numbers
     public static int generateP() {
         int n = 300;
         boolean[] prime = new boolean[n + 1];
