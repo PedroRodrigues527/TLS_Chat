@@ -15,8 +15,8 @@ public class HMac {
      * @param data String with specified data input
      * @param key String with specified key input
      * @return the instance of the specified algorithm
+     * @see <a href="https://www.baeldung.com/java-hmac">method that guarantees the integrity of the message between two parties</a>
      */
-    //FONTE: https://www.baeldung.com/java-hmac
     public static byte[] hmacWithJava(String algorithm, String data, String key)
             throws NoSuchAlgorithmException, InvalidKeyException {
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
