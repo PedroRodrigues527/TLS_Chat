@@ -101,6 +101,7 @@ public class SymmetricAlgorithm {
     }
 
     /**
+     * @see <a href="https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa"> get base64 encoded version of the key </a>
      * Method responsible for the Generation of a symmetric key
      *
      * @param sizeKey size of the key
@@ -111,7 +112,7 @@ public class SymmetricAlgorithm {
         KeyGenerator keyGenerator = KeyGenerator.getInstance( algorithm );
         keyGenerator.init( sizeKey );
         SecretKey key = keyGenerator.generateKey( );
-        // get base64 encoded version of the key: https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa
+
         return Base64.getEncoder().encodeToString( key.getEncoded( ) );
     }
 

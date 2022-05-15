@@ -80,6 +80,7 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * @see <a href="https://stackoverflow.com/questions/26828649/diffiehellman-key-exchange-to-aes-or-desede-in-java"> Key exchange code </a>
      * Method responsible with a Parte of the'TLS' agreement between client and server.
      *
      * @param isSymmetric boolean that checks with algorithm is compatible with symmetric algorithms
@@ -123,7 +124,6 @@ public class ClientHandler implements Runnable {
                     secretKeyDHByte = ByteBuffer.allocate(8).put(secretKeyDH.toByteArray()).array();
                 }
                 SecretKeySpec secretKey = new SecretKeySpec( secretKeyDHByte , encUser );
-                //https://stackoverflow.com/questions/26828649/diffiehellman-key-exchange-to-aes-or-desede-in-java
                 this.symmetricKey = Base64.getEncoder().encodeToString(secretKey.getEncoded( ) );
             }
             else if(keyExchangeUser.equals("ECDH"))
@@ -136,7 +136,6 @@ public class ClientHandler implements Runnable {
                 out.writeObject(publicKeyECDH);
                 PublicKey publicClientKeyECDH = (PublicKey) in.readObject();
 
-                //https://stackoverflow.com/questions/26828649/diffiehellman-key-exchange-to-aes-or-desede-in-java
                 byte[] secretKeyECDH = ecdh.getSecretKey(privateKeyECDH, publicClientKeyECDH);
                 MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
                 byte[] bkey;
