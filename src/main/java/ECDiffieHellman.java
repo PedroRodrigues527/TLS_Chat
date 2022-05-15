@@ -3,6 +3,7 @@ import java.security.*;
 
 /**
  * Class responsible for the key Generator methods
+ * @see <a href="https://www.geeksforgeeks.org/primitive-root-of-a-prime-number-n-modulo-n/%22%3E</a>
  */
 //FONTE: https://neilmadden.blog/2016/05/20/ephemeral-elliptic-curve-diffie-hellman-key-agreement-in-java/
 public class ECDiffieHellman {
