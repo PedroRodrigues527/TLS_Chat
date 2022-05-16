@@ -463,7 +463,7 @@ public class ClientHandler implements Runnable {
 
 
     /**
-     * This Method Encrypts message with respectively algorithm
+     * This Method Encrypts message with respectively algorithm.
      *
      * @param message array of byte message received
      * @param client client online
